@@ -37,7 +37,8 @@ namespace Service.UserReward.Jobs
 				_logger.LogDebug("Handled {model} for {user}", nameof(RetryUsedServiceBusModel), userId);
 
 				//за 10 использований сброса результатов
-				bool achievementsChanged = achievements.SetAchievement(UserAchievement.BadLuck, () => message.TotalCount >= 10);
+				bool achievementsChanged = achievements.SetAchievement(UserAchievement.BadLuck, () => 
+					message.TotalCount >= Program.ReloadedSettings(model => model.BadLuckAchievementRetriesCount).Invoke());
 
 				await _totalRewardService.CheckTotal(userId, statuses, achievements, false, achievementsChanged);
 			}

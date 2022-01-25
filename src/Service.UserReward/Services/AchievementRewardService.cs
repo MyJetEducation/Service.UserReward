@@ -102,7 +102,7 @@ namespace Service.UserReward.Services
 			}
 
 			//закончил урок быстрее указанного времени
-			changed = changed || achievements.SetAchievement(UserAchievement.DoubleQuick, () => model.Duration.TotalSeconds > KeySecondsForTaskSettingsModel.GetDefaultSeconds(taskType));
+			changed = changed || achievements.SetAchievement(UserAchievement.DoubleQuick, () => model.Duration.TotalSeconds > SecondsForTaskSettingsModel.GetDefaultSeconds(taskType));
 
 			return changed;
 		}

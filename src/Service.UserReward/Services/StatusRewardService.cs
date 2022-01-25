@@ -29,17 +29,19 @@ namespace Service.UserReward.Services
 			//выбрана дисциплина и пройден 1 урок
 			bool changed = statuses.SetStatus(UserStatus.Newbie, () => tutorial == EducationTutorial.PersonalFinance && unit == 1 && task == 1);
 
+			TaskFinishedStepCountSettingsModel taskFinishedStepCountSettings = Program.ReloadedSettings(sets => sets.TaskFinishedStepCount).Invoke();
+
 			//за 9 пройденных тестов
-			changed = changed || statuses.SetStatus(UserStatus.Analyst, tasksByType[EducationTaskType.Test] / 9);
+			changed = changed || statuses.SetStatus(UserStatus.Analyst, tasksByType[EducationTaskType.Test] / taskFinishedStepCountSettings.TestCount);
 
 			//за 9 пройденных видео
-			changed = changed || statuses.SetStatus(UserStatus.Financier, tasksByType[EducationTaskType.Video] / 9);
+			changed = changed || statuses.SetStatus(UserStatus.Financier, tasksByType[EducationTaskType.Video] / taskFinishedStepCountSettings.VideoCount);
 
 			//за 9 прочтенных текстов
-			changed = changed || statuses.SetStatus(UserStatus.Investor, tasksByType[EducationTaskType.Text] / 9);
+			changed = changed || statuses.SetStatus(UserStatus.Investor, tasksByType[EducationTaskType.Text] / taskFinishedStepCountSettings.TextCount);
 
 			//изучено 5 дисциплин полностью
-			changed = changed || statuses.SetStatus(UserStatus.Investor, () => IsTutorialLearned(educationProgress, EducationTutorial.HealthAndFinance));
+			changed = changed || statuses.SetStatus(UserStatus.Bachelor, () => IsTutorialLearned(educationProgress, EducationTutorial.HealthAndFinance));
 
 			//изучены все дисциплины
 			changed = changed || statuses.SetStatus(UserStatus.Magister, () => IsTutorialLearned(educationProgress, EducationTutorial.Economics));
@@ -74,7 +76,7 @@ namespace Service.UserReward.Services
 
 		public bool CheckTotal(List<StatusDto> statuses, IEnumerable<UserAchievement> achievements)
 		{
-			KeyRewardStatusCountSettingsModel rewardStatusCountSettings = Program.ReloadedSettings(model => model.KeyRewardStatusCount).Invoke();
+			RewardStatusCountSettingsModel rewardStatusCountSettings = Program.ReloadedSettings(model => model.RewardStatusCount).Invoke();
 
 			//за опредленное количество ачивок каждого типа (1-3-5)
 

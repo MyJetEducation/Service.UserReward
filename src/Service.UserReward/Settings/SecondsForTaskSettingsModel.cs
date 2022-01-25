@@ -3,7 +3,7 @@ using Service.Core.Domain.Models.Education;
 
 namespace Service.UserReward.Settings
 {
-	public class KeySecondsForTaskSettingsModel
+	public class SecondsForTaskSettingsModel
 	{
 		[YamlProperty("ForCase")]
 		public int ForCase { get; set; }
@@ -25,7 +25,7 @@ namespace Service.UserReward.Settings
 
 		public static int GetDefaultSeconds(EducationTaskType taskType)
 		{
-			KeySecondsForTaskSettingsModel settings = Program.ReloadedSettings(settingsModel => settingsModel.KeySecondsForTask).Invoke();
+			SecondsForTaskSettingsModel settings = Program.ReloadedSettings(settingsModel => settingsModel.SecondsForTask).Invoke();
 			return taskType switch {
 				EducationTaskType.Case => settings.ForCase, 
 				EducationTaskType.TrueFalse => settings.ForTrueFalse, 

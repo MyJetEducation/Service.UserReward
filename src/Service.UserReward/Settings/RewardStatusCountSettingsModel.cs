@@ -2,7 +2,7 @@
 
 namespace Service.UserReward.Settings
 {
-	public class KeyRewardStatusCountSettingsModel
+	public class RewardStatusCountSettingsModel
 	{
 		[YamlProperty("StandardCount")]
 		public int StandardCount { get; set; }

@@ -29,19 +29,22 @@ namespace Service.UserReward.Settings
 		[YamlProperty("UserReward.KeyUserNewAchievement")]
 		public string KeyUserNewAchievement { get; set; }
 
-		[YamlProperty("UserReward.KeyInvitedFriends")]
-		public string KeyInvitedFriends { get; set; }
-
 		[YamlProperty("UserReward.KeyEducationProgress")]
 		public string KeyEducationProgress { get; set; }
 
 		[YamlProperty("UserReward.KeyTestTasks100Prc")]
 		public string KeyTestTasks100Prc { get; set; }
 
-		[YamlProperty("UserReward.KeySecondsForTasks")]
-		public KeySecondsForTaskSettingsModel KeySecondsForTask { get; set; }
+		[YamlProperty("UserReward.BadLuckAchievementRetriesCount")]
+		public int BadLuckAchievementRetriesCount { get; set; }
+
+		[YamlProperty("UserReward.SecondsForTasks")]
+		public SecondsForTaskSettingsModel SecondsForTask { get; set; }
 		
-		[YamlProperty("UserReward.KeyRewardStatusCount")]
-		public KeyRewardStatusCountSettingsModel KeyRewardStatusCount { get; set; }
+		[YamlProperty("UserReward.RewardStatusCount")]
+		public RewardStatusCountSettingsModel RewardStatusCount { get; set; }
+		
+		[YamlProperty("UserReward.TaskFinishedStepCount")]
+		public TaskFinishedStepCountSettingsModel TaskFinishedStepCount { get; set; }
 	}
 }
