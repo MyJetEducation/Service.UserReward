@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 using DotNetCoreDecorators;
 using Microsoft.Extensions.Logging;
 using Service.Core.Domain.Models.Constants;
+using Service.UserProfile.Grpc.ServiceBusModel;
 using Service.UserReward.Domain.Models;
-using Service.UserReward.Grpc.ServiceBusModels;
 using Service.UserReward.Helpers;
 
 namespace Service.UserReward.Jobs

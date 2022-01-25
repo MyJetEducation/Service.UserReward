@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using DotNetCoreDecorators;
 using Microsoft.Extensions.Logging;
 using Service.Core.Domain.Models.Constants;
+using Service.EducationRetry.Grpc.ServiceBusModel;
 using Service.UserReward.Domain.Models;
 using Service.UserReward.Grpc.ServiceBusModels;
 using Service.UserReward.Helpers;
@@ -38,7 +39,7 @@ namespace Service.UserReward.Jobs
 
 				//за 10 использований сброса результатов
 				bool achievementsChanged = achievements.SetAchievement(UserAchievement.BadLuck, () => 
-					message.TotalCount >= Program.ReloadedSettings(model => model.BadLuckAchievementRetriesCount).Invoke());
+					message.Count >= Program.ReloadedSettings(model => model.BadLuckAchievementRetriesCount).Invoke());
 
 				await _totalRewardService.CheckTotal(userId, statuses, achievements, false, achievementsChanged);
 			}
