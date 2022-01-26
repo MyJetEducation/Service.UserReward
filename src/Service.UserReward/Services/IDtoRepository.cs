@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Service.Core.Domain.Models.Constants;
-using Service.Core.Grpc.Models;
+using Service.Core.Client.Constants;
+using Service.Core.Client.Models;
 using Service.EducationProgress.Domain.Models;
 using Service.UserReward.Models;
 

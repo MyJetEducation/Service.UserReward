@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Service.Core.Domain.Models.Constants;
+using Service.Core.Client.Constants;
 using Service.UserReward.Grpc.Models;
 using Service.UserReward.Models;
 

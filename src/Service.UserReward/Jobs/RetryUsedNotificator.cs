@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using DotNetCoreDecorators;
 using Microsoft.Extensions.Logging;
-using Service.Core.Domain.Models.Constants;
+using Service.Core.Client.Constants;
 using Service.EducationRetry.Grpc.ServiceBusModel;
 using Service.UserReward.Helpers;
 using Service.UserReward.Services;

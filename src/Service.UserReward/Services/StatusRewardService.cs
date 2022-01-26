@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Service.Core.Domain.Models.Constants;
-using Service.Core.Domain.Models.Education;
+using Service.Core.Client.Constants;
+using Service.Core.Client.Education;
 using Service.EducationProgress.Domain.Models;
 using Service.EducationProgress.Grpc.ServiceBusModels;
 using Service.UserReward.Constants;

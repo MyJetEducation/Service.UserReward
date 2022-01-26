@@ -1,5 +1,5 @@
 ﻿using MyYamlParser;
-using Service.Core.Domain.Models.Education;
+using Service.Core.Client.Education;
 
 namespace Service.UserReward.Settings
 {

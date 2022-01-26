@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using Service.Core.Domain.Models.Constants;
-using Service.Core.Domain.Models.Education;
+using Service.Core.Client.Constants;
+using Service.Core.Client.Education;
 
 namespace Service.UserReward.Models
 {

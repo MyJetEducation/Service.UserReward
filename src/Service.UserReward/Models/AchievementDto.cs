@@ -1,4 +1,5 @@
-﻿using Service.Core.Domain.Models.Constants;
+﻿
+using Service.Core.Client.Constants;
 
 namespace Service.UserReward.Models
 {
