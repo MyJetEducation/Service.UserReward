@@ -1,6 +1,6 @@
 ﻿using Service.Core.Domain.Models.Constants;
 
-namespace Service.UserReward.Domain.Models
+namespace Service.UserReward.Models
 {
 	public class AchievementDto
 	{

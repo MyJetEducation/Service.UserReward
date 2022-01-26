@@ -9,7 +9,7 @@ using Service.Core.Grpc.Models;
 using Service.EducationProgress.Domain.Models;
 using Service.ServerKeyValue.Grpc;
 using Service.ServerKeyValue.Grpc.Models;
-using Service.UserReward.Domain.Models;
+using Service.UserReward.Models;
 
 namespace Service.UserReward.Services
 {
@@ -24,9 +24,9 @@ namespace Service.UserReward.Services
 			_logger = logger;
 		}
 
-		public async ValueTask<(List<StatusDto>, List<UserAchievement>)> GetAll(Guid? userId)
+		public async ValueTask<(StatusInfo, AchievementInfo)> GetAll(Guid? userId)
 		{
-			return (await GetStatuses(userId), await GetAchievements(userId));
+			return (new StatusInfo(await GetStatuses(userId)), new AchievementInfo(await GetAchievements(userId)));
 		}
 
 		public async ValueTask<List<StatusDto>> GetStatuses(Guid? userId)
@@ -48,16 +48,16 @@ namespace Service.UserReward.Services
 			return await GetData<EducationProgressDto>(Program.ReloadedSettings(model => model.KeyEducationProgress), userId);
 		}
 
-		public async ValueTask<bool> SetStatuses(Guid? userId, IEnumerable<StatusDto> dtos)
+		public async ValueTask<bool> SetStatuses(Guid? userId, StatusInfo statuses)
 		{
-			CommonGrpcResponse commonGrpcResponse = await SetData(Program.ReloadedSettings(model => model.KeyUserStatus), userId, dtos);
+			CommonGrpcResponse commonGrpcResponse = await SetData(Program.ReloadedSettings(model => model.KeyUserStatus), userId, statuses.Items);
 			
 			return commonGrpcResponse.IsSuccess;
 		}
 
-		public async ValueTask<bool> SetAchievements(Guid? userId, IEnumerable<UserAchievement> achievements)
+		public async ValueTask<bool> SetAchievements(Guid? userId, AchievementInfo achievements)
 		{
-			AchievementDto[] dtos = achievements.Select(arch => new AchievementDto {Achievement = arch}).ToArray();
+			AchievementDto[] dtos = achievements.Items.Select(arch => new AchievementDto {Achievement = arch}).ToArray();
 
 			CommonGrpcResponse commonGrpcResponse = await SetData(Program.ReloadedSettings(model => model.KeyUserAchievement), userId, dtos);
 

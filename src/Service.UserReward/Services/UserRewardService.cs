@@ -1,14 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Service.Core.Domain.Models.Constants;
 using Service.Core.Domain.Models.Education;
 using Service.Core.Grpc.Models;
-using Service.UserReward.Domain.Models;
 using Service.UserReward.Grpc;
 using Service.UserReward.Grpc.Models;
 using Service.UserReward.Helpers;
 using Service.UserReward.Mappers;
+using Service.UserReward.Models;
 
 namespace Service.UserReward.Services
 {
@@ -32,46 +31,35 @@ namespace Service.UserReward.Services
 		public async ValueTask<UserAchievementsGrpcResponse> GetUserNewUnitAchievementsAsync(GetUserAchievementsGrpcRequset request) =>
 			(await _dtoRepository.GetNewAchievements(request.UserId)).ToGrpcModel();
 
-		public async ValueTask<CommonGrpcResponse> MascotInteractionAsync(MascotInteractionGrpcRequset requset)
-		{
-			Guid? userId = requset.UserId;
-			(List<StatusDto> statuses, List<UserAchievement> achievements) = await _dtoRepository.GetAll(userId);
+		/// <summary>
+		///     повзаимодействовал с персонажем
+		/// </summary>
+		public async ValueTask<CommonGrpcResponse> MascotInteractionAsync(MascotInteractionGrpcRequset requset) =>
+			await Process(requset.UserId, (statuses, achievements) => achievements.SetAchievement(UserAchievement.FirstTouch));
 
-			bool achievementsChanged = achievements.SetAchievement(UserAchievement.FirstTouch);
+		/// <summary>
+		///     впервые зашел в marketplace (вне онбординга)
+		/// </summary>
+		public async ValueTask<CommonGrpcResponse> VisitMarketplace(VisitMarketplaceGrpcRequset requset) =>
+			await Process(requset.UserId, (statuses, achievements) => achievements.SetAchievement(UserAchievement.Eyescatter));
 
-			return await _totalRewardService.CheckTotal(userId, statuses, achievements, false, achievementsChanged);
-		}
-
-		public async ValueTask<CommonGrpcResponse> VisitMarketplace(VisitMarketplaceGrpcRequset requset)
-		{
-			Guid? userId = requset.UserId;
-			(List<StatusDto> statuses, List<UserAchievement> achievements) = await _dtoRepository.GetAll(userId);
-
-			bool achievementsChanged = achievements.SetAchievement(UserAchievement.Eyescatter);
-
-			return await _totalRewardService.CheckTotal(userId, statuses, achievements, false, achievementsChanged);
-		}
-
-		public async ValueTask<CommonGrpcResponse> LearningStartedAsync(LearningStartedGrpcRequset requset)
-		{
-			Guid? userId = requset.UserId;
-			(List<StatusDto> statuses, List<UserAchievement> achievements) = await _dtoRepository.GetAll(userId);
-			var statusesChanged = false;
-			var achievementsChanged = false;
-
-			switch (requset.Tutorial)
+		public async ValueTask<CommonGrpcResponse> LearningStartedAsync(LearningStartedGrpcRequset requset) =>
+			await Process(requset.UserId, (statuses, achievements) =>
 			{
-				case EducationTutorial.PersonalFinance when requset.Unit == 1 && requset.Task == 1:
-					achievementsChanged = achievements.SetAchievement(UserAchievement.Ignition);
-					break;
-				case EducationTutorial.BehavioralFinance when requset.Unit == null && requset.Task == null:
-					statusesChanged = statuses.SetStatus(UserStatus.SecondYearStudent);
-					break;
-				default:
-					return CommonGrpcResponse.Fail;
-			}
+				//начал первый урок
+				achievements.SetAchievement(UserAchievement.Ignition, () => requset.Tutorial == EducationTutorial.PersonalFinance && requset.Unit == 1 && requset.Task == 1);
 
-			return await _totalRewardService.CheckTotal(userId, statuses, achievements, statusesChanged, achievementsChanged);
+				//начато изучение 2-й дисциплины
+				statuses.SetStatus(UserStatus.SecondYearStudent, () => requset.Tutorial == EducationTutorial.BehavioralFinance && requset.Unit == null && requset.Task == null);
+			});
+
+		private async ValueTask<CommonGrpcResponse> Process(Guid? userId, Action<StatusInfo, AchievementInfo> action)
+		{
+			(StatusInfo statuses, AchievementInfo achievements) = await _dtoRepository.GetAll(userId);
+
+			action.Invoke(statuses, achievements);
+
+			return await _totalRewardService.CheckTotal(userId, statuses, achievements);
 		}
 	}
 }

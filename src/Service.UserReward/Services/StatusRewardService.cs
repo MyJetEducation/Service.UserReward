@@ -6,8 +6,9 @@ using Service.Core.Domain.Models.Constants;
 using Service.Core.Domain.Models.Education;
 using Service.EducationProgress.Domain.Models;
 using Service.EducationProgress.Grpc.ServiceBusModels;
-using Service.UserReward.Domain.Models;
+using Service.UserReward.Constants;
 using Service.UserReward.Helpers;
+using Service.UserReward.Models;
 using Service.UserReward.Settings;
 
 namespace Service.UserReward.Services
@@ -18,84 +19,79 @@ namespace Service.UserReward.Services
 
 		public StatusRewardService(IDtoRepository dtoRepository) => _dtoRepository = dtoRepository;
 
-		public async Task<bool> CheckByProgress(SetProgressInfoServiceBusModel model, EducationProgressDto[] educationProgress, List<StatusDto> statuses)
+		public async ValueTask CheckByProgress(SetProgressInfoServiceBusModel model, EducationProgressDto[] educationProgress, StatusInfo statuses)
 		{
 			Guid? userId = model.UserId;
 			int unit = model.Unit;
 			int task = model.Task;
 			EducationTutorial tutorial = model.Tutorial;
 			Dictionary<EducationTaskType, int> tasksByType = GetTasksByType(educationProgress);
-
+			Func<TaskFinishedStepCountSettingsModel> taskFinishedStepCountSettings = Program.ReloadedSettings(sets => sets.TaskFinishedStepCount);
+			
 			//выбрана дисциплина и пройден 1 урок
-			bool changed = statuses.SetStatus(UserStatus.Newbie, () => tutorial == EducationTutorial.PersonalFinance && unit == 1 && task == 1);
-
-			TaskFinishedStepCountSettingsModel taskFinishedStepCountSettings = Program.ReloadedSettings(sets => sets.TaskFinishedStepCount).Invoke();
+			statuses.SetStatus(UserStatus.Newbie, () => tutorial == EducationTutorial.PersonalFinance && unit == 1 && task == 1)
 
 			//за 9 пройденных тестов
-			changed = changed || statuses.SetStatus(UserStatus.Analyst, tasksByType[EducationTaskType.Test] / taskFinishedStepCountSettings.TestCount);
+			.SetStatus(UserStatus.Analyst, tasksByType[EducationTaskType.Test] / taskFinishedStepCountSettings.Invoke().TestCount)
 
 			//за 9 пройденных видео
-			changed = changed || statuses.SetStatus(UserStatus.Financier, tasksByType[EducationTaskType.Video] / taskFinishedStepCountSettings.VideoCount);
+			.SetStatus(UserStatus.Financier, tasksByType[EducationTaskType.Video] / taskFinishedStepCountSettings.Invoke().VideoCount)
 
 			//за 9 прочтенных текстов
-			changed = changed || statuses.SetStatus(UserStatus.Investor, tasksByType[EducationTaskType.Text] / taskFinishedStepCountSettings.TextCount);
+			.SetStatus(UserStatus.Investor, tasksByType[EducationTaskType.Text] / taskFinishedStepCountSettings.Invoke().TextCount)
 
 			//изучено 5 дисциплин полностью
-			changed = changed || statuses.SetStatus(UserStatus.Bachelor, () => IsTutorialLearned(educationProgress, EducationTutorial.HealthAndFinance));
+			.SetStatus(UserStatus.Bachelor, () => IsTutorialLearned(educationProgress, EducationTutorial.HealthAndFinance))
 
 			//изучены все дисциплины
-			changed = changed || statuses.SetStatus(UserStatus.Magister, () => IsTutorialLearned(educationProgress, EducationTutorial.Economics));
+			.SetStatus(UserStatus.Magister, () => IsTutorialLearned(educationProgress, EducationTutorial.Economics));
 
 			//за выполнение задач Test на 100% с 1 попытки
-			if (!statuses.Any(dto => dto.Status == UserStatus.Expert && dto.Level == 5))
+			if (!statuses.Items.Any(dto => dto.Status == UserStatus.Expert && dto.Level == 5))
 			{
 				TestTasks100PrcDto tasks100Prc = await _dtoRepository.GetTestTasks100Prc(userId);
 				if (tasks100Prc.Count == 9)
 				{
-					int maxLevel = statuses
+					int maxLevel = statuses.Items
 						.Where(dto => dto.Status == UserStatus.Expert)
 						.Max(dto => dto.Level)
 						.GetValueOrDefault();
 
-					changed = changed || statuses.SetStatus(UserStatus.Expert, () => maxLevel < 5, maxLevel + 1);
+					statuses.SetStatus(UserStatus.Expert, () => maxLevel < 5, maxLevel + 1);
 
 					await _dtoRepository.ClearTestTasks100Prc(userId);
 				}
 			}
-
-			return changed;
 		}
 
-		private static bool IsTutorialLearned(EducationProgressDto[] educationProgress, EducationTutorial tutorial) =>
+		private static bool IsTutorialLearned(IEnumerable<EducationProgressDto> educationProgress, EducationTutorial tutorial) =>
 			educationProgress.Where(dto => dto.Tutorial == tutorial).Average(dto => dto.Value.GetValueOrDefault()) >= AnswerProgress.OkAnswerProgress;
 
-		private static Dictionary<EducationTaskType, int> GetTasksByType(EducationProgressDto[] educationProgress) => educationProgress
+		private static Dictionary<EducationTaskType, int> GetTasksByType(IEnumerable<EducationProgressDto> educationProgress) => educationProgress
 			.GroupBy(dto => EducationHelper.GetTask(dto.Tutorial, dto.Unit, dto.Task).TaskType)
 			.ToDictionary(grouping => grouping.Key, grouping =>
 				grouping.Count(arg => arg.IsOk()));
 
-		public bool CheckTotal(List<StatusDto> statuses, IEnumerable<UserAchievement> achievements)
+		public void CheckTotal(StatusInfo statuses, AchievementInfo achievements)
 		{
-			RewardStatusCountSettingsModel rewardStatusCountSettings = Program.ReloadedSettings(model => model.RewardStatusCount).Invoke();
+			void TrySetRewarded(Func<int> defaultCountFunc, int level, AchievementType achievementType)
+			{
+				if (statuses.Items.Any(dto => dto.Status == UserStatus.Rewarded && dto.Level == level))
+					return;
+
+				int defaultCount = defaultCountFunc.Invoke();
+				if (defaultCount == 0)
+					return;
+				
+				statuses.SetStatus(UserStatus.Rewarded, () => AchievementHelper.GetAchievementCount(achievements, type => type == achievementType) >= defaultCount, level);
+			}
 
 			//за опредленное количество ачивок каждого типа (1-3-5)
-
-			bool changed = statuses.SetStatus(UserStatus.Rewarded, () => rewardStatusCountSettings.StandardCount > 0
-				&& AchievementHelper.GetAchievementCount(achievements, type => type == AchievementType.Standard) >= rewardStatusCountSettings.StandardCount)
-
-			|| statuses.SetStatus(UserStatus.Rewarded, () => rewardStatusCountSettings.RareCount > 0
-				&& AchievementHelper.GetAchievementCount(achievements, type => type == AchievementType.Rare) >= rewardStatusCountSettings.RareCount, 2)
-
-			|| statuses.SetStatus(UserStatus.Rewarded, () => rewardStatusCountSettings.SuperRareCount> 0
-				&& AchievementHelper.GetAchievementCount(achievements, type => type == AchievementType.SuperRare) >= rewardStatusCountSettings.SuperRareCount, 3)
-
-			|| statuses.SetStatus(UserStatus.Rewarded, () => rewardStatusCountSettings.UltraRareCount > 0
-				&& AchievementHelper.GetAchievementCount(achievements, type => type == AchievementType.UltraRare) >= rewardStatusCountSettings.UltraRareCount, 4)
-
-			|| statuses.SetStatus(UserStatus.Rewarded, () => rewardStatusCountSettings.UniqueCount > 0
-				&& AchievementHelper.GetAchievementCount(achievements, type => type == AchievementType.Unique) >= rewardStatusCountSettings.UniqueCount, 5);
-
-			return changed;
+			TrySetRewarded(Program.ReloadedSettings(model => model.RewardStatusCount.StandardCount), 1, AchievementType.Standard);
+			TrySetRewarded(Program.ReloadedSettings(model => model.RewardStatusCount.RareCount), 2, AchievementType.Rare);
+			TrySetRewarded(Program.ReloadedSettings(model => model.RewardStatusCount.SuperRareCount), 3, AchievementType.SuperRare);
+			TrySetRewarded(Program.ReloadedSettings(model => model.RewardStatusCount.UltraRareCount), 4, AchievementType.UltraRare);
+			TrySetRewarded(Program.ReloadedSettings(model => model.RewardStatusCount.UniqueCount), 5, AchievementType.Unique);
 		}
 	}
 }

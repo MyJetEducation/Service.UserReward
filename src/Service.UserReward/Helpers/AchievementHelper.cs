@@ -1,21 +1,33 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Service.Core.Domain.Models.Constants;
+using Service.UserReward.Constants;
+using Service.UserReward.Models;
 
 namespace Service.UserReward.Helpers
 {
-	public enum AchievementType
-	{
-		Standard,
-		Rare,
-		SuperRare,
-		UltraRare,
-		Unique
-	}
-
 	public static class AchievementHelper
 	{
+		public static AchievementInfo SetAchievement(this AchievementInfo info, UserAchievement achievement, Func<bool> predicate)
+		{
+			if (info.Items.Contains(achievement) || !predicate.Invoke())
+				return info;
+
+			info.AddItem(achievement);
+
+			return info;
+		}
+
+		public static AchievementInfo SetAchievement(this AchievementInfo info, UserAchievement achievement)
+		{
+			if (info.Items.Contains(achievement))
+				return info;
+
+			info.AddItem(achievement);
+
+			return info;
+		}
+
 		public static (UserAchievement achievement, AchievementType type)[] AchievementTypeInfo => new (UserAchievement achievement, AchievementType type)[]
 		{
 			//Standard
@@ -78,10 +90,10 @@ namespace Service.UserReward.Helpers
 			(UserAchievement.Complaisance, AchievementType.Standard)
 		};
 
-		public static bool HasAllAchievementByType(IEnumerable<UserAchievement> achievements, AchievementType type) =>
+		public static bool HasAllAchievementByType(AchievementInfo achievements, AchievementType type) =>
 			HasAchievement(achievements, achievementType => achievementType == type);
 
-		public static bool HasAchievement(IEnumerable<UserAchievement> achievements, Func<AchievementType, bool> func)
+		public static bool HasAchievement(AchievementInfo achievements, Func<AchievementType, bool> func)
 		{
 			int userAchievementCount = GetAchievementCount(achievements, func);
 
@@ -90,9 +102,9 @@ namespace Service.UserReward.Helpers
 			return userAchievementCount == allAchievementCount;
 		}
 
-		public static int GetAchievementCount(IEnumerable<UserAchievement> achievements, Func<AchievementType, bool> func)
+		public static int GetAchievementCount(AchievementInfo achievements, Func<AchievementType, bool> func)
 		{
-			return (from achievement in achievements
+			return (from achievement in achievements.Items
 				join typeInfo in AchievementTypeInfo on achievement equals typeInfo.achievement
 				where func.Invoke(typeInfo.type)
 				select achievement)

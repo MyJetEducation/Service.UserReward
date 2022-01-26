@@ -1,7 +1,8 @@
-﻿using Service.Core.Domain.Models.Constants;
+﻿using System.Collections.Generic;
+using Service.Core.Domain.Models.Constants;
 using Service.Core.Domain.Models.Education;
 
-namespace Service.UserReward.Domain.Models
+namespace Service.UserReward.Models
 {
 	public class NewAchievementsDto
 	{
@@ -15,6 +16,6 @@ namespace Service.UserReward.Domain.Models
 
 		public int Unit { get; set; }
 
-		public UserAchievement[] Achievements { get; set; }
+		public List<UserAchievement> Achievements { get; set; }
 	}
 }

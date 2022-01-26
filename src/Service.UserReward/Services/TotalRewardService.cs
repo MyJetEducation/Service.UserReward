@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using Service.Core.Domain.Models.Constants;
 using Service.Core.Grpc.Models;
-using Service.UserReward.Domain.Models;
+using Service.UserReward.Models;
 
 namespace Service.UserReward.Services
 {
@@ -20,16 +18,16 @@ namespace Service.UserReward.Services
 			_dtoRepository = dtoRepository;
 		}
 
-		public async ValueTask<CommonGrpcResponse> CheckTotal(Guid? userId, List<StatusDto> statuses, List<UserAchievement> achievements, bool statusesChanged, bool achievementsChanged)
+		public async ValueTask<CommonGrpcResponse> CheckTotal(Guid? userId, StatusInfo statuses, AchievementInfo achievements)
 		{
-			achievementsChanged = achievementsChanged || _achievementRewardService.CheckTotal(statuses, achievements);
-			statusesChanged = statusesChanged || _statusRewardService.CheckTotal(statuses, achievements);
+			_achievementRewardService.CheckTotal(statuses, achievements);
+			_statusRewardService.CheckTotal(statuses, achievements);
 
-			if (statusesChanged)
-				achievementsChanged = achievementsChanged || _achievementRewardService.CheckAllStatusesAchievement(statuses, achievements);
+			if (statuses.Changed)
+				_achievementRewardService.CheckAllStatusesAchievement(statuses, achievements);
 
-			bool achievementSaved = !achievementsChanged || await _dtoRepository.SetAchievements(userId, achievements);
-			bool statusesSaved = !statusesChanged && await _dtoRepository.SetStatuses(userId, statuses);
+			bool achievementSaved = !achievements.Changed || await _dtoRepository.SetAchievements(userId, achievements);
+			bool statusesSaved = !statuses.Changed && await _dtoRepository.SetStatuses(userId, statuses);
 
 			return CommonGrpcResponse.Result(achievementSaved && statusesSaved);
 		}

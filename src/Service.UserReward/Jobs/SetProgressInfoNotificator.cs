@@ -1,13 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using DotNetCoreDecorators;
 using Microsoft.Extensions.Logging;
-using Service.Core.Domain.Models.Constants;
 using Service.EducationProgress.Domain.Models;
 using Service.EducationProgress.Grpc.ServiceBusModels;
-using Service.UserReward.Domain.Models;
+using Service.UserReward.Models;
 using Service.UserReward.Services;
 
 namespace Service.UserReward.Jobs
@@ -39,26 +37,19 @@ namespace Service.UserReward.Jobs
 			foreach (SetProgressInfoServiceBusModel message in events)
 			{
 				Guid? userId = message.UserId;
-				(List<StatusDto> statuses, List<UserAchievement> achievements) = await _dtoRepository.GetAll(userId);
+				(StatusInfo statuses, AchievementInfo achievements) = await _dtoRepository.GetAll(userId);
 				EducationProgressDto[] educationProgress = await _dtoRepository.GetEducationProgress(userId);
 
-				UserAchievement[] wasAchievements = achievements
-					.ToArray()
-					.Clone() as UserAchievement[]
-					?? Array.Empty<UserAchievement>();
+				_logger.LogDebug("ServiceBus Notificator {notificator} handled message for {user}", GetType().Name, userId);
 
-				_logger.LogDebug("Handled {model} for {user}", nameof(SetProgressInfoServiceBusModel), userId);
-
-				bool statusesChanged = await _statusRewardService.CheckByProgress(message, educationProgress, statuses);
-				bool achievementsChanged = _achievementRewardService.CheckByProgress(message, educationProgress, achievements);
-
-				await _totalRewardService.CheckTotal(userId, statuses, achievements, statusesChanged, achievementsChanged);
-
-				await ProcessNewAchievements(userId, message, achievements, wasAchievements);
+				await _statusRewardService.CheckByProgress(message, educationProgress, statuses);
+				_achievementRewardService.CheckByProgress(message, educationProgress, achievements);
+				await _totalRewardService.CheckTotal(userId, statuses, achievements);
+				await ProcessNewAchievements(userId, message, achievements);
 			}
 		}
 
-		private async Task ProcessNewAchievements(Guid? userId, SetProgressInfoServiceBusModel message, IEnumerable<UserAchievement> achievements, UserAchievement[] wasAchievements)
+		private async Task ProcessNewAchievements(Guid? userId, SetProgressInfoServiceBusModel message, AchievementInfo achievements)
 		{
 			if (message.IsRetry)
 				return;
@@ -68,13 +59,9 @@ namespace Service.UserReward.Jobs
 			if (message.Tutorial != newAchievementsDto.Tutorial || message.Unit != newAchievementsDto.Unit)
 				newAchievementsDto = new NewAchievementsDto(message.Tutorial, message.Unit);
 
-			UserAchievement[] newAchievements = newAchievementsDto.Achievements;
-			int wasLength = newAchievements.Length;
+			newAchievementsDto.Achievements.AddRange(achievements.NewItems);
 
-			newAchievementsDto.Achievements = achievements.Except(wasAchievements).ToArray();
-
-			if (wasLength != newAchievements.Length)
-				await _dtoRepository.SetNewAchievements(userId, newAchievementsDto);
+			await _dtoRepository.SetNewAchievements(userId, newAchievementsDto);
 		}
 	}
 }

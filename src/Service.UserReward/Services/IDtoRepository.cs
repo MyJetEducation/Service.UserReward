@@ -4,20 +4,21 @@ using System.Threading.Tasks;
 using Service.Core.Domain.Models.Constants;
 using Service.Core.Grpc.Models;
 using Service.EducationProgress.Domain.Models;
+using Service.UserReward.Models;
 
-namespace Service.UserReward.Domain.Models
+namespace Service.UserReward.Services
 {
 	public interface IDtoRepository
 	{
 		ValueTask<EducationProgressDto[]> GetEducationProgress(Guid? userId);
 
-		ValueTask<(List<StatusDto>, List<UserAchievement>)> GetAll(Guid? userId);
+		ValueTask<(StatusInfo, AchievementInfo)> GetAll(Guid? userId);
 
 		ValueTask<List<StatusDto>> GetStatuses(Guid? userId);
-		ValueTask<bool> SetStatuses(Guid? userId, IEnumerable<StatusDto> dtos);
+		ValueTask<bool> SetStatuses(Guid? userId, StatusInfo statuses);
 
 		ValueTask<List<UserAchievement>> GetAchievements(Guid? userId);
-		ValueTask<bool> SetAchievements(Guid? userId, IEnumerable<UserAchievement> achievements);
+		ValueTask<bool> SetAchievements(Guid? userId, AchievementInfo achievements);
 
 		ValueTask<NewAchievementsDto> GetNewAchievements(Guid? userId);
 		ValueTask<CommonGrpcResponse> SetNewAchievements(Guid? userId, NewAchievementsDto dto);

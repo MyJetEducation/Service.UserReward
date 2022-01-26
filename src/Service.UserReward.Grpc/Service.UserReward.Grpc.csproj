@@ -6,11 +6,12 @@
 
   <ItemGroup>
     <PackageReference Include="MyJetEducation.Service.Core.Client" Version="1.0.15" />
-    <PackageReference Include="System.ServiceModel.Primitives" Version="4.9.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Service.UserReward.Domain.Models\Service.UserReward.Domain.Models.csproj" />
+    <ProjectReference Include="..\Service.UserReward.Domain.Models\Service.UserReward.Domain.Models.csproj">
+      <TreatAsUsed>true</TreatAsUsed>
+    </ProjectReference>
   </ItemGroup>
 
 </Project>
