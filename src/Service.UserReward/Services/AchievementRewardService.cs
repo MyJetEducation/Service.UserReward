@@ -14,6 +14,16 @@ namespace Service.UserReward.Services
 {
 	public class AchievementRewardService : IAchievementRewardService
 	{
+		private static readonly (UserStatus status, int maxLevel)[] LeveledUserStatus =
+		{
+			(UserStatus.Expert, 5),
+			(UserStatus.Analyst, 5),
+			(UserStatus.Strategist, 5),
+			(UserStatus.Financier, 5),
+			(UserStatus.Investor, 5),
+			(UserStatus.Rewarded, 3)
+		};
+
 		public void CheckByProgress(SetProgressInfoServiceBusModel model, EducationProgressDto[] educationProgress, AchievementInfo achievements)
 		{
 			int unit = model.Unit;
@@ -143,7 +153,17 @@ namespace Service.UserReward.Services
 			CheckAllStatusesAchievement(statuses, achievements);
 		}
 
-		public void CheckAllStatusesAchievement(StatusInfo statuses, AchievementInfo achievements) => 
-			achievements.SetAchievement(UserAchievement.CheckMe, () => statuses.Items.Select(dto => dto.Status).Intersect(Enum.GetValues<UserStatus>()).Any() == false);
+		public void CheckAllStatusesAchievement(StatusInfo statuses, AchievementInfo achievements)
+		{
+			List<StatusDto> statusesItems = statuses.Items;
+
+			if (Enum.GetValues<UserStatus>().Except(statusesItems.Select(dto => dto.Status)).Any())
+				return;
+
+			if (LeveledUserStatus.Any(tuple => statusesItems.First(dto => dto.Status == tuple.status).Level != tuple.maxLevel))
+				return;
+
+			achievements.SetAchievement(UserAchievement.CheckMe);
+		}
 	}
 }

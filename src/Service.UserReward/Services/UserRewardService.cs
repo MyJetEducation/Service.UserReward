@@ -22,36 +22,35 @@ namespace Service.UserReward.Services
 			_totalRewardService = totalRewardService;
 		}
 
-		public async ValueTask<UserStatusesGrpcResponse> GetUserStatusesAsync(GetUserStatusesGrpcRequset request) =>
+		public async ValueTask<UserStatusesGrpcResponse> GetUserStatusesAsync(GetUserStatusesGrpcRequest request) =>
 			(await _dtoRepository.GetStatuses(request.UserId)).ToGrpcModel();
 
-		public async ValueTask<UserAchievementsGrpcResponse> GetUserAchievementsAsync(GetUserAchievementsGrpcRequset request) =>
+		public async ValueTask<UserAchievementsGrpcResponse> GetUserAchievementsAsync(GetUserAchievementsGrpcRequest request) =>
 			(await _dtoRepository.GetAchievements(request.UserId)).ToGrpcModel();
 
-		public async ValueTask<UserAchievementsGrpcResponse> GetUserNewUnitAchievementsAsync(GetUserAchievementsGrpcRequset request) =>
+		public async ValueTask<UserAchievementsGrpcResponse> GetUserNewUnitAchievementsAsync(GetUserAchievementsGrpcRequest request) =>
 			(await _dtoRepository.GetNewAchievements(request.UserId)).ToGrpcModel();
 
 		/// <summary>
 		///     повзаимодействовал с персонажем
 		/// </summary>
-		public async ValueTask<CommonGrpcResponse> MascotInteractionAsync(MascotInteractionGrpcRequset requset) =>
-			await Process(requset.UserId, (statuses, achievements) => achievements.SetAchievement(UserAchievement.FirstTouch));
+		public async ValueTask<CommonGrpcResponse> MascotInteractionAsync(MascotInteractionGrpcRequest request) =>
+			await Process(request.UserId, (statuses, achievements) => achievements.SetAchievement(UserAchievement.FirstTouch));
 
 		/// <summary>
 		///     впервые зашел в marketplace (вне онбординга)
 		/// </summary>
-		public async ValueTask<CommonGrpcResponse> VisitMarketplace(VisitMarketplaceGrpcRequset requset) =>
-			await Process(requset.UserId, (statuses, achievements) => achievements.SetAchievement(UserAchievement.Eyescatter));
+		public async ValueTask<CommonGrpcResponse> VisitMarketplace(VisitMarketplaceGrpcRequest request) =>
+			await Process(request.UserId, (statuses, achievements) => achievements.SetAchievement(UserAchievement.Eyescatter));
 
-		public async ValueTask<CommonGrpcResponse> LearningStartedAsync(LearningStartedGrpcRequset requset) =>
-			await Process(requset.UserId, (statuses, achievements) =>
-			{
-				//начал первый урок
-				achievements.SetAchievement(UserAchievement.Ignition, () => requset.Tutorial == EducationTutorial.PersonalFinance && requset.Unit == 1 && requset.Task == 1);
+		public async ValueTask<CommonGrpcResponse> LearningStartedAsync(LearningStartedGrpcRequest request) => await Process(request.UserId, (statuses, achievements) =>
+		{
+			//начал первый урок
+			achievements.SetAchievement(UserAchievement.Ignition, () => request.Tutorial == EducationTutorial.PersonalFinance && request.Unit == 1 && request.Task == 1);
 
-				//начато изучение 2-й дисциплины
-				statuses.SetStatus(UserStatus.SecondYearStudent, () => requset.Tutorial == EducationTutorial.BehavioralFinance && requset.Unit == null && requset.Task == null);
-			});
+			//начато изучение 2-й дисциплины
+			statuses.SetStatus(UserStatus.SecondYearStudent, () => request.Tutorial == EducationTutorial.BehavioralFinance && request.Unit == null && request.Task == null);
+		});
 
 		private async ValueTask<CommonGrpcResponse> Process(Guid? userId, Action<StatusInfo, AchievementInfo> action)
 		{

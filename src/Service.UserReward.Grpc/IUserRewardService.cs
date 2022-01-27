@@ -9,21 +9,21 @@ namespace Service.UserReward.Grpc
 	public interface IUserRewardService
 	{
 		[OperationContract]
-		ValueTask<UserStatusesGrpcResponse> GetUserStatusesAsync(GetUserStatusesGrpcRequset request);
+		ValueTask<UserStatusesGrpcResponse> GetUserStatusesAsync(GetUserStatusesGrpcRequest request);
 
 		[OperationContract]
-		ValueTask<UserAchievementsGrpcResponse> GetUserAchievementsAsync(GetUserAchievementsGrpcRequset request);
+		ValueTask<UserAchievementsGrpcResponse> GetUserAchievementsAsync(GetUserAchievementsGrpcRequest request);
 
 		[OperationContract]
-		ValueTask<UserAchievementsGrpcResponse> GetUserNewUnitAchievementsAsync(GetUserAchievementsGrpcRequset request);
+		ValueTask<UserAchievementsGrpcResponse> GetUserNewUnitAchievementsAsync(GetUserAchievementsGrpcRequest request);
 
 		[OperationContract]
-		ValueTask<CommonGrpcResponse> MascotInteractionAsync(MascotInteractionGrpcRequset requset);
+		ValueTask<CommonGrpcResponse> MascotInteractionAsync(MascotInteractionGrpcRequest request);
 
 		[OperationContract]
-		ValueTask<CommonGrpcResponse> LearningStartedAsync(LearningStartedGrpcRequset requset);
+		ValueTask<CommonGrpcResponse> LearningStartedAsync(LearningStartedGrpcRequest request);
 		
 		[OperationContract]
-		ValueTask<CommonGrpcResponse> VisitMarketplace(VisitMarketplaceGrpcRequset requset);
+		ValueTask<CommonGrpcResponse> VisitMarketplace(VisitMarketplaceGrpcRequest request);
 	}
 }

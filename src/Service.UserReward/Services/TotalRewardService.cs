@@ -27,7 +27,7 @@ namespace Service.UserReward.Services
 				_achievementRewardService.CheckAllStatusesAchievement(statuses, achievements);
 
 			bool achievementSaved = !achievements.Changed || await _dtoRepository.SetAchievements(userId, achievements);
-			bool statusesSaved = !statuses.Changed && await _dtoRepository.SetStatuses(userId, statuses);
+			bool statusesSaved = !statuses.Changed || await _dtoRepository.SetStatuses(userId, statuses);
 
 			return CommonGrpcResponse.Result(achievementSaved && statusesSaved);
 		}

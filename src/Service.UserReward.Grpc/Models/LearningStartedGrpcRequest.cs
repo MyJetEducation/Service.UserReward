@@ -5,7 +5,7 @@ using Service.Core.Client.Education;
 namespace Service.UserReward.Grpc.Models
 {
 	[DataContract]
-	public class LearningStartedGrpcRequset
+	public class LearningStartedGrpcRequest
 	{
 		[DataMember(Order = 1)]
 		public Guid? UserId { get; set; }
