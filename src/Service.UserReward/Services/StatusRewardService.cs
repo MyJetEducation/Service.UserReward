@@ -26,7 +26,6 @@ namespace Service.UserReward.Services
 			int task = model.Task;
 			EducationTutorial tutorial = model.Tutorial;
 			Dictionary<EducationTaskType, int> tasksByType = GetTasksByType(educationProgress);
-			Func<TaskFinishedStepCountSettingsModel> taskFinishedStepCountSettings = Program.ReloadedSettings(sets => sets.TaskFinishedStepCount);
 
 			int FinishedTaskByType(EducationTaskType type, Func<int> settingsCountFunc) => 
 				!tasksByType.ContainsKey(type) ? 0 : tasksByType[type] / settingsCountFunc.Invoke();

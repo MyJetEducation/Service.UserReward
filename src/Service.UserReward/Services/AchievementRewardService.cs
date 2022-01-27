@@ -108,7 +108,7 @@ namespace Service.UserReward.Services
 			})
 
 			//закончил урок быстрее указанного времени
-			.SetAchievement(UserAchievement.DoubleQuick, () => model.Duration.TotalSeconds > SecondsForTaskSettingsModel.GetDefaultSeconds(taskType));
+			.SetAchievement(UserAchievement.DoubleQuick, () => model.Duration.Seconds < SecondsForTaskSettingsModel.GetDefaultSeconds(taskType));
 		}
 
 		private static EducationTutorial GetCurrentTutorial(EducationProgressDto[] educationProgress)
