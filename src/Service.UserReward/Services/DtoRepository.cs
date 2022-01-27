@@ -38,9 +38,9 @@ namespace Service.UserReward.Services
 
 		public async ValueTask<List<UserAchievement>> GetAchievements(Guid? userId)
 		{
-			AchievementDto[] achievementDtos = await GetData<AchievementDto>(Program.ReloadedSettings(model => model.KeyUserAchievement), userId);
+			UserAchievement[] achievementDtos = await GetData<UserAchievement>(Program.ReloadedSettings(model => model.KeyUserAchievement), userId);
 
-			return achievementDtos.Select(dto => dto.Achievement).ToList();
+			return achievementDtos.ToList();
 		}
 
 		public async ValueTask<EducationProgressDto[]> GetEducationProgress(Guid? userId)
@@ -57,9 +57,7 @@ namespace Service.UserReward.Services
 
 		public async ValueTask<bool> SetAchievements(Guid? userId, AchievementInfo achievements)
 		{
-			AchievementDto[] dtos = achievements.Items.Select(arch => new AchievementDto {Achievement = arch}).ToArray();
-
-			CommonGrpcResponse commonGrpcResponse = await SetData(Program.ReloadedSettings(model => model.KeyUserAchievement), userId, dtos);
+			CommonGrpcResponse commonGrpcResponse = await SetData(Program.ReloadedSettings(model => model.KeyUserAchievement), userId, achievements.Items);
 
 			return commonGrpcResponse.IsSuccess;
 		}
