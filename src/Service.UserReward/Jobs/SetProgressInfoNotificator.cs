@@ -56,7 +56,7 @@ namespace Service.UserReward.Jobs
 
 			NewAchievementsDto newAchievementsDto = await _dtoRepository.GetNewAchievements(userId);
 
-			if (message.Tutorial != newAchievementsDto.Tutorial || message.Unit != newAchievementsDto.Unit)
+			if (newAchievementsDto == null || message.Tutorial != newAchievementsDto.Tutorial || message.Unit != newAchievementsDto.Unit)
 				newAchievementsDto = new NewAchievementsDto(message.Tutorial, message.Unit);
 
 			newAchievementsDto.Achievements.AddRange(achievements.NewItems);

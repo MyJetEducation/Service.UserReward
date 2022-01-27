@@ -15,7 +15,7 @@ namespace Service.UserReward.Mappers
 
 		public static UserAchievementsGrpcResponse ToGrpcModel(this NewAchievementsDto newAchievements) => new UserAchievementsGrpcResponse
 		{
-			Items = newAchievements.Achievements.ToArray()
+			Items = (newAchievements?.Achievements ?? new List<UserAchievement>()).ToArray()
 		};
 
 		public static UserStatusesGrpcResponse ToGrpcModel(this IEnumerable<StatusDto> statuses) => new UserStatusesGrpcResponse
