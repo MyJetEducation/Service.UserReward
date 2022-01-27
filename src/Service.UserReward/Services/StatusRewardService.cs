@@ -27,18 +27,21 @@ namespace Service.UserReward.Services
 			EducationTutorial tutorial = model.Tutorial;
 			Dictionary<EducationTaskType, int> tasksByType = GetTasksByType(educationProgress);
 			Func<TaskFinishedStepCountSettingsModel> taskFinishedStepCountSettings = Program.ReloadedSettings(sets => sets.TaskFinishedStepCount);
-			
+
+			int FinishedTaskByType(EducationTaskType type, Func<int> settingsCountFunc) => 
+				!tasksByType.ContainsKey(type) ? 0 : tasksByType[type] / settingsCountFunc.Invoke();
+
 			//выбрана дисциплина и пройден 1 урок
 			statuses.SetStatus(UserStatus.Newbie, () => tutorial == EducationTutorial.PersonalFinance && unit == 1 && task == 1)
 
 			//за 9 пройденных тестов
-			.SetStatus(UserStatus.Analyst, tasksByType[EducationTaskType.Test] / taskFinishedStepCountSettings.Invoke().TestCount)
+			.SetStatus(UserStatus.Analyst, FinishedTaskByType(EducationTaskType.Test, Program.ReloadedSettings(sets => sets.TaskFinishedStepCount.TestCount)))
 
 			//за 9 пройденных видео
-			.SetStatus(UserStatus.Financier, tasksByType[EducationTaskType.Video] / taskFinishedStepCountSettings.Invoke().VideoCount)
+			.SetStatus(UserStatus.Financier, FinishedTaskByType(EducationTaskType.Video, Program.ReloadedSettings(sets => sets.TaskFinishedStepCount.VideoCount)))
 
 			//за 9 прочтенных текстов
-			.SetStatus(UserStatus.Investor, tasksByType[EducationTaskType.Text] / taskFinishedStepCountSettings.Invoke().TextCount)
+			.SetStatus(UserStatus.Investor, FinishedTaskByType(EducationTaskType.Text, Program.ReloadedSettings(sets => sets.TaskFinishedStepCount.TextCount)))
 
 			//изучено 5 дисциплин полностью
 			.SetStatus(UserStatus.Bachelor, () => IsTutorialLearned(educationProgress, EducationTutorial.HealthAndFinance))
@@ -52,20 +55,21 @@ namespace Service.UserReward.Services
 				TestTasks100PrcDto tasks100Prc = await _dtoRepository.GetTestTasks100Prc(userId);
 				if (tasks100Prc.Count == 9)
 				{
-					int maxLevel = statuses.Items
-						.Where(dto => dto.Status == UserStatus.Expert)
-						.Max(dto => dto.Level)
-						.GetValueOrDefault();
+					int? expertLevel = statuses.Items.FirstOrDefault(dto => dto.Status == UserStatus.Expert)?.Level;
 
-					statuses.SetStatus(UserStatus.Expert, () => maxLevel < 5, maxLevel + 1);
+					statuses.SetStatus(UserStatus.Expert, expertLevel.GetValueOrDefault() + 1);
 
 					await _dtoRepository.ClearTestTasks100Prc(userId);
 				}
 			}
 		}
 
-		private static bool IsTutorialLearned(IEnumerable<EducationProgressDto> educationProgress, EducationTutorial tutorial) =>
-			educationProgress.Where(dto => dto.Tutorial == tutorial).Average(dto => dto.Value.GetValueOrDefault()) >= AnswerProgress.OkAnswerProgress;
+		private static bool IsTutorialLearned(IEnumerable<EducationProgressDto> educationProgress, EducationTutorial tutorial)
+		{
+			EducationProgressDto[] educationProgressDtos = educationProgress.Where(dto => dto.Tutorial == tutorial).ToArray();
+
+			return educationProgressDtos.Any() && educationProgressDtos.Average(dto => dto.Value.GetValueOrDefault()) >= AnswerProgress.OkAnswerProgress;
+		}
 
 		private static Dictionary<EducationTaskType, int> GetTasksByType(IEnumerable<EducationProgressDto> educationProgress) => educationProgress
 			.GroupBy(dto => EducationHelper.GetTask(dto.Tutorial, dto.Unit, dto.Task).TaskType)

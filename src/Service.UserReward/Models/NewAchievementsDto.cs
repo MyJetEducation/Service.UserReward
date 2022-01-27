@@ -10,6 +10,7 @@ namespace Service.UserReward.Models
 		{
 			Tutorial = tutorial;
 			Unit = unit;
+			Achievements = new List<UserAchievement>();
 		}
 
 		public EducationTutorial Tutorial { get; set; }

@@ -70,7 +70,7 @@ namespace Service.UserReward.Services
 
 		public async ValueTask<CommonGrpcResponse> SetNewAchievements(Guid? userId, NewAchievementsDto dto)
 		{
-			return await SetData(Program.ReloadedSettings(model => model.KeyUserAchievement), userId, dto);
+			return await SetData(Program.ReloadedSettings(model => model.KeyUserNewAchievement), userId, dto);
 		}
 
 		public async ValueTask<CommonGrpcResponse> ClearTestTasks100Prc(Guid? userId)
@@ -97,7 +97,7 @@ namespace Service.UserReward.Services
 				: JsonSerializer.Deserialize<TDto[]>(value);
 		}
 
-		private async ValueTask<CommonGrpcResponse> SetData<TDto>(Func<string> settingsKeyFunc, Guid? userId, params TDto[] dtos)
+		private async ValueTask<CommonGrpcResponse> SetData<TDto>(Func<string> settingsKeyFunc, Guid? userId, TDto dto)
 		{
 			CommonGrpcResponse response = await _serverKeyValueService.Put(new ItemsPutGrpcRequest
 			{
@@ -107,7 +107,7 @@ namespace Service.UserReward.Services
 					new KeyValueGrpcModel
 					{
 						Key = settingsKeyFunc.Invoke(),
-						Value = JsonSerializer.Serialize(dtos)
+						Value = JsonSerializer.Serialize(dto)
 					}
 				}
 			});

@@ -12,12 +12,7 @@ namespace Service.UserReward.Helpers
 			if (info.Items.Any(dto => dto.Status == status && dto.Level == level) || !predicate.Invoke())
 				return info;
 
-			info.Items.Add(new StatusDto
-			{
-				Status = status,
-				Level = level
-			});
-
+			info.Items.Add(new StatusDto(status, level));
 			info.Changed = true;
 
 			return info;
@@ -28,12 +23,7 @@ namespace Service.UserReward.Helpers
 			if (level == 0 || level > 5 || info.Items.Any(dto => dto.Status == status && dto.Level == level))
 				return info;
 
-			info.Items.Add(new StatusDto
-			{
-				Status = status,
-				Level = level
-			});
-
+			info.Items.Add(new StatusDto(status, level));
 			info.Changed = true;
 
 			return info;

@@ -81,13 +81,13 @@ namespace Service.UserReward.Helpers
 			(UserAchievement.InStore, AchievementType.UltraRare),
 
 			//Standard
-			(UserAchievement.UltraRareCollector, AchievementType.Standard),
-			(UserAchievement.Curious, AchievementType.Standard),
-			(UserAchievement.TaDam, AchievementType.Standard),
-			(UserAchievement.NotSoHard, AchievementType.Standard),
-			(UserAchievement.MyPride, AchievementType.Standard),
-			(UserAchievement.Split, AchievementType.Standard),
-			(UserAchievement.Complaisance, AchievementType.Standard)
+			(UserAchievement.UltraRareCollector, AchievementType.Unique),
+			(UserAchievement.Curious, AchievementType.Unique),
+			(UserAchievement.TaDam, AchievementType.Unique),
+			(UserAchievement.NotSoHard, AchievementType.Unique),
+			(UserAchievement.MyPride, AchievementType.Unique),
+			(UserAchievement.Split, AchievementType.Unique),
+			(UserAchievement.Complaisance, AchievementType.Unique)
 		};
 
 		public static bool HasAllAchievementByType(AchievementInfo achievements, AchievementType type) =>
