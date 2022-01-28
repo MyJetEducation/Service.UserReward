@@ -9,7 +9,7 @@
   <ItemGroup>
     <PackageReference Include="MyJetEducation.Service.EducationRetry.Client" Version="1.0.3" />
     <PackageReference Include="MyJetEducation.Service.ServerKeyValue.Client" Version="1.0.2" />
-    <PackageReference Include="MyJetEducation.Service.UserProgress.Client" Version="1.0.4" />
+    <PackageReference Include="MyJetEducation.Service.UserProgress.Client" Version="1.0.7" />
     <PackageReference Include="SimpleTrading.ServiceStatusReporterConnector" Version="1.0.9" />
     <PackageReference Include="MyJetWallet.Sdk.ServiceBus" Version="2.1.0" />
     <PackageReference Include="MyJetEducation.Service.EducationProgress.Client" Version="1.0.11" />
