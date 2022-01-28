@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using DotNetCoreDecorators;
 using Microsoft.Extensions.Logging;
 using Service.Core.Client.Constants;
-using Service.UserProgress.Domain.Models;
+using Service.ServiceBus.Models;
 using Service.UserReward.Helpers;
 using Service.UserReward.Services;
 using IDtoRepository = Service.UserReward.Services.IDtoRepository;

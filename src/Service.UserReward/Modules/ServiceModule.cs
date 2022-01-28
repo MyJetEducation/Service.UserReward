@@ -2,12 +2,8 @@
 using MyJetWallet.Sdk.ServiceBus;
 using MyServiceBus.Abstractions;
 using MyServiceBus.TcpClient;
-using Service.EducationProgress.Grpc.ServiceBusModels;
-using Service.EducationRetry.Grpc.ServiceBusModel;
 using Service.ServerKeyValue.Client;
-using Service.UserProfile.Grpc.ServiceBusModel;
-using Service.UserProgress.Domain.Models;
-using Service.UserReward.Grpc.ServiceBusModels;
+using Service.ServiceBus.Models;
 using Service.UserReward.Jobs;
 using Service.UserReward.Services;
 
@@ -15,6 +11,8 @@ namespace Service.UserReward.Modules
 {
 	public class ServiceModule : Module
 	{
+		private const string QueueName = "MyJetEducation-UserReward";
+
 		protected override void Load(ContainerBuilder builder)
 		{
 			builder.RegisterKeyValueClient(Program.Settings.ServerKeyValueServiceUrl);
@@ -24,14 +22,11 @@ namespace Service.UserReward.Modules
 			builder.RegisterType<TotalRewardService>().AsImplementedInterfaces().SingleInstance();
 
 			MyServiceBusTcpClient serviceBusClient = builder.RegisterMyServiceBusTcpClient(Program.ReloadedSettings(e => e.ServiceBusReader), Program.LogFactory);
-			const string queueName = "MyJetEducation-UserReward";
-			const TopicQueueType queryType = TopicQueueType.Permanent;
-
-			builder.RegisterMyServiceBusSubscriberBatch<ProfilingFinishedServiceBusModel>(serviceBusClient, ProfilingFinishedServiceBusModel.TopicName, queueName, queryType);
-			builder.RegisterMyServiceBusSubscriberBatch<SetProgressInfoServiceBusModel>(serviceBusClient, SetProgressInfoServiceBusModel.TopicName, queueName, queryType);
-			builder.RegisterMyServiceBusSubscriberBatch<UserAccountFilledServiceBusModel>(serviceBusClient, UserAccountFilledServiceBusModel.TopicName, queueName, queryType);
-			builder.RegisterMyServiceBusSubscriberBatch<RetryUsedServiceBusModel>(serviceBusClient, RetryUsedServiceBusModel.TopicName, queueName, queryType);
-			builder.RegisterMyServiceBusSubscriberBatch<UserProgressUpdatedServiceBusModel>(serviceBusClient, UserProgressUpdatedServiceBusModel.TopicName, queueName, queryType);
+			builder.RegisterMyServiceBusSubscriberBatch<ProfilingFinishedServiceBusModel>(serviceBusClient, ProfilingFinishedServiceBusModel.TopicName, QueueName, TopicQueueType.Permanent);
+			builder.RegisterMyServiceBusSubscriberBatch<SetProgressInfoServiceBusModel>(serviceBusClient, SetProgressInfoServiceBusModel.TopicName, QueueName, TopicQueueType.Permanent);
+			builder.RegisterMyServiceBusSubscriberBatch<UserAccountFilledServiceBusModel>(serviceBusClient, UserAccountFilledServiceBusModel.TopicName, QueueName, TopicQueueType.Permanent);
+			builder.RegisterMyServiceBusSubscriberBatch<RetryUsedServiceBusModel>(serviceBusClient, RetryUsedServiceBusModel.TopicName, QueueName, TopicQueueType.Permanent);
+			builder.RegisterMyServiceBusSubscriberBatch<UserProgressUpdatedServiceBusModel>(serviceBusClient, UserProgressUpdatedServiceBusModel.TopicName, QueueName, TopicQueueType.Permanent);
 
 			builder.RegisterType<ProfilingFinishedNotificator>().AutoActivate().SingleInstance();
 			builder.RegisterType<SetProgressInfoNotificator>().AutoActivate().SingleInstance();
