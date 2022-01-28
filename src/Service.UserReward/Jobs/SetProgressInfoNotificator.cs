@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using DotNetCoreDecorators;
 using Microsoft.Extensions.Logging;
 using Service.EducationProgress.Domain.Models;
-using Service.EducationProgress.Grpc.ServiceBusModels;
+using Service.ServiceBus.Models;
 using Service.UserReward.Models;
 using Service.UserReward.Services;
 

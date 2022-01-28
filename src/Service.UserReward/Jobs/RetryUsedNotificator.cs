@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using DotNetCoreDecorators;
 using Microsoft.Extensions.Logging;
 using Service.Core.Client.Constants;
-using Service.EducationRetry.Grpc.ServiceBusModel;
+using Service.ServiceBus.Models;
 using Service.UserReward.Helpers;
 using Service.UserReward.Services;
 

@@ -1,5 +1,5 @@
 ﻿using Service.EducationProgress.Domain.Models;
-using Service.EducationProgress.Grpc.ServiceBusModels;
+using Service.ServiceBus.Models;
 using Service.UserReward.Models;
 
 namespace Service.UserReward.Services

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Service.Core.Client.Constants;
 using Service.Core.Client.Education;
 using Service.EducationProgress.Domain.Models;
-using Service.EducationProgress.Grpc.ServiceBusModels;
+using Service.ServiceBus.Models;
 using Service.UserReward.Constants;
 using Service.UserReward.Helpers;
 using Service.UserReward.Models;
