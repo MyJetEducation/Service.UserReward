@@ -41,6 +41,7 @@ namespace Service.UserReward.Helpers
 			(UserAchievement.SoEasy, AchievementType.Standard),
 			(UserAchievement.Habitant, AchievementType.Standard),
 			(UserAchievement.GreenArrow, AchievementType.Standard),
+			(UserAchievement.Complaisance, AchievementType.Standard),
 
 			//Rare
 			(UserAchievement.NowIKnow, AchievementType.Rare),
@@ -86,8 +87,7 @@ namespace Service.UserReward.Helpers
 			(UserAchievement.TaDam, AchievementType.Unique),
 			(UserAchievement.NotSoHard, AchievementType.Unique),
 			(UserAchievement.MyPride, AchievementType.Unique),
-			(UserAchievement.Split, AchievementType.Unique),
-			(UserAchievement.Complaisance, AchievementType.Unique)
+			(UserAchievement.Split, AchievementType.Unique)
 		};
 
 		public static bool HasAllAchievementByType(AchievementInfo achievements, AchievementType type) =>
