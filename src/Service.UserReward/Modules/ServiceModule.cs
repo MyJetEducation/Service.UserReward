@@ -15,7 +15,7 @@ namespace Service.UserReward.Modules
 
 		protected override void Load(ContainerBuilder builder)
 		{
-			builder.RegisterKeyValueClient(Program.Settings.ServerKeyValueServiceUrl);
+			builder.RegisterServerKeyValueClient(Program.Settings.ServerKeyValueServiceUrl);
 			builder.RegisterType<StatusRewardService>().AsImplementedInterfaces().SingleInstance();
 			builder.RegisterType<AchievementRewardService>().AsImplementedInterfaces().SingleInstance();
 			builder.RegisterType<DtoRepository>().AsImplementedInterfaces().SingleInstance();
