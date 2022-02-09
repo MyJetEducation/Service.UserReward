@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Service.Core.Client.Constants;
-using Service.Core.Client.Education;
+using Service.Education.Constants;
+using Service.Education.Helpers;
+using Service.Education.Structure;
 using Service.EducationProgress.Domain.Models;
 using Service.ServiceBus.Models;
 using Service.UserReward.Constants;
 using Service.UserReward.Helpers;
 using Service.UserReward.Models;
-using Service.UserReward.Settings;
 
 namespace Service.UserReward.Services
 {
@@ -67,7 +68,7 @@ namespace Service.UserReward.Services
 		{
 			EducationProgressDto[] educationProgressDtos = educationProgress.Where(dto => dto.Tutorial == tutorial).ToArray();
 
-			return educationProgressDtos.Any() && educationProgressDtos.Average(dto => dto.Value.GetValueOrDefault()) >= AnswerProgress.OkAnswerProgress;
+			return educationProgressDtos.Any() && educationProgressDtos.Average(dto => dto.Value.GetValueOrDefault()) >= Progress.OkProgress;
 		}
 
 		private static Dictionary<EducationTaskType, int> GetTasksByType(IEnumerable<EducationProgressDto> educationProgress) => educationProgress

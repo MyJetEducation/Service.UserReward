@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Service.Core.Client.Education;
+using Service.Education.Helpers;
+using Service.Education.Structure;
 using Service.EducationProgress.Domain.Models;
 
 namespace Service.UserReward.Services

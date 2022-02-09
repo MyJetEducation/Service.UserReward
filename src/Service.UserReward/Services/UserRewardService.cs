@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Service.Core.Client.Constants;
-using Service.Core.Client.Education;
 using Service.Core.Client.Models;
+using Service.Education.Structure;
 using Service.UserReward.Grpc;
 using Service.UserReward.Grpc.Models;
 using Service.UserReward.Helpers;

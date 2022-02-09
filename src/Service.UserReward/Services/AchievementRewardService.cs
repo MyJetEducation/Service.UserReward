@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using Service.Core.Client.Constants;
-using Service.Core.Client.Education;
+using Service.Education.Constants;
+using Service.Education.Helpers;
+using Service.Education.Structure;
 using Service.EducationProgress.Domain.Models;
 using Service.ServiceBus.Models;
 using Service.UserReward.Constants;
@@ -64,7 +66,7 @@ namespace Service.UserReward.Services
 			.SetAchievement(UserAchievement.IveSeenThis, () => tasksByTypeInfo.Value.Data.Any(grouping => grouping.All(arg => arg.HasProgress)))
 
 			//прошел все уроки одного типа на 100%
-			.SetAchievement(UserAchievement.Bullseye, () => tasksByTypeInfo.Value.Data.Any(grouping => grouping.All(arg => arg.Value == AnswerProgress.MaxAnswerProgress)))
+			.SetAchievement(UserAchievement.Bullseye, () => tasksByTypeInfo.Value.Data.Any(grouping => grouping.All(arg => arg.Value == Progress.MaxProgress)))
 
 			//прошел всё с одного раза не менее, чем с 80% результатом
 			.SetAchievement(UserAchievement.Split, () => passedAllWithoutRetries)
@@ -89,7 +91,7 @@ namespace Service.UserReward.Services
 				int todayFinishedUnits = educationProgress
 					.GroupBy(dto => new {dto.Tutorial, dto.Unit}, dto => new {dto.Value, dto.HasProgress, dto.Date})
 					.Count(grouping =>
-						grouping.Average(arg => arg.Value) >= AnswerProgress.OkAnswerProgress
+						grouping.Average(arg => arg.Value) >= Progress.OkProgress
 							&& grouping.All(arg => arg.HasProgress && arg.Date.HasValue && arg.Date.Value.Date == DateTime.UtcNow.Date));
 
 				return todayFinishedUnits > 1;
