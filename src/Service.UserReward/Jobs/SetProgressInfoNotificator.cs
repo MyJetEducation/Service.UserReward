@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using DotNetCoreDecorators;
 using Microsoft.Extensions.Logging;
+using Service.Core.Client.Constants;
 using Service.EducationProgress.Domain.Models;
 using Service.ServiceBus.Models;
 using Service.UserReward.Models;
@@ -54,14 +55,19 @@ namespace Service.UserReward.Jobs
 			if (message.IsRetry)
 				return;
 
-			NewAchievementsDto newAchievementsDto = await _dtoRepository.GetNewAchievements(userId);
+			List<UserAchievement> newItems = achievements.NewItems;
 
-			if (newAchievementsDto == null || message.Tutorial != newAchievementsDto.Tutorial || message.Unit != newAchievementsDto.Unit)
-				newAchievementsDto = new NewAchievementsDto(message.Tutorial, message.Unit);
+			NewAchievementsUnitDto forUnitDto = await _dtoRepository.GetNewAchievementsUnit(userId);
+			if (forUnitDto == null || message.Tutorial != forUnitDto.Tutorial || message.Unit != forUnitDto.Unit)
+				forUnitDto = new NewAchievementsUnitDto(message.Tutorial, message.Unit);
+			forUnitDto.Achievements.AddRange(newItems);
 
-			newAchievementsDto.Achievements.AddRange(achievements.NewItems);
+			NewAchievementsTutorialDto forTutorialDto = await _dtoRepository.GetNewAchievementsTutorial(userId);
+			if (forTutorialDto == null || message.Tutorial != forTutorialDto.Tutorial)
+				forTutorialDto = new NewAchievementsTutorialDto(message.Tutorial);
+			forTutorialDto.Achievements.AddRange(newItems);
 
-			await _dtoRepository.SetNewAchievements(userId, newAchievementsDto);
+			await _dtoRepository.SetNewAchievements(userId, forTutorialDto, forUnitDto);
 		}
 	}
 }

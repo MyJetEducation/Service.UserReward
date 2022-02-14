@@ -20,8 +20,9 @@ namespace Service.UserReward.Services
 		ValueTask<List<UserAchievement>> GetAchievements(Guid? userId);
 		ValueTask<bool> SetAchievements(Guid? userId, AchievementInfo achievements);
 
-		ValueTask<NewAchievementsDto> GetNewAchievements(Guid? userId);
-		ValueTask<CommonGrpcResponse> SetNewAchievements(Guid? userId, NewAchievementsDto dto);
+		ValueTask<NewAchievementsTutorialDto> GetNewAchievementsTutorial(Guid? userId);
+		ValueTask<NewAchievementsUnitDto> GetNewAchievementsUnit(Guid? userId);
+		ValueTask<CommonGrpcResponse> SetNewAchievements(Guid? userId, NewAchievementsTutorialDto tutorialDto, NewAchievementsUnitDto unitDto);
 
 		ValueTask<TestTasks100PrcDto> GetTestTasks100Prc(Guid? userId);
 		ValueTask<CommonGrpcResponse> ClearTestTasks100Prc(Guid? userId);

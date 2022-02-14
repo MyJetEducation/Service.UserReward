@@ -63,15 +63,26 @@ namespace Service.UserReward.Services
 			return commonGrpcResponse.IsSuccess;
 		}
 
-		public async ValueTask<NewAchievementsDto> GetNewAchievements(Guid? userId)
+		public async ValueTask<NewAchievementsUnitDto> GetNewAchievementsUnit(Guid? userId)
 		{
-			return await GetDataSingle<NewAchievementsDto>(Program.ReloadedSettings(model => model.KeyUserNewAchievement), userId);
+			return await GetDataSingle<NewAchievementsUnitDto>(Program.ReloadedSettings(model => model.KeyUserNewAchievementUnit), userId);
+		}
+		
+		public async ValueTask<NewAchievementsTutorialDto> GetNewAchievementsTutorial(Guid? userId)
+		{
+			return await GetDataSingle<NewAchievementsTutorialDto>(Program.ReloadedSettings(model => model.KeyUserNewAchievementTutorial), userId);
 		}
 
-		public async ValueTask<CommonGrpcResponse> SetNewAchievements(Guid? userId, NewAchievementsDto dto)
+		public async ValueTask<CommonGrpcResponse> SetNewAchievements(Guid? userId, NewAchievementsTutorialDto tutorialDto, NewAchievementsUnitDto unitDto)
 		{
-			Func<string> keyFunc = Program.ReloadedSettings(model => model.KeyUserNewAchievement);
+			CommonGrpcResponse resultTutorial = await SetNewAchievementsDto(userId, Program.ReloadedSettings(model => model.KeyUserNewAchievementTutorial), tutorialDto);
+			CommonGrpcResponse resultUnit = await SetNewAchievementsDto(userId, Program.ReloadedSettings(model => model.KeyUserNewAchievementUnit), unitDto);
 
+			return CommonGrpcResponse.Result(resultTutorial.IsSuccess && resultUnit.IsSuccess);
+		}
+
+		private async ValueTask<CommonGrpcResponse> SetNewAchievementsDto<TDto>(Guid? userId, Func<string> keyFunc, TDto dto) where TDto: class, INewAchievementsDto
+		{
 			if (dto.Achievements.IsNullOrEmpty())
 				return await _serverKeyValueService.Delete(new ItemsDeleteGrpcRequest
 				{

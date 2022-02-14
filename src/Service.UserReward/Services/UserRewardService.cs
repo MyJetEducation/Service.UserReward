@@ -28,8 +28,17 @@ namespace Service.UserReward.Services
 		public async ValueTask<UserAchievementsGrpcResponse> GetUserAchievementsAsync(GetUserAchievementsGrpcRequest request) =>
 			(await _dtoRepository.GetAchievements(request.UserId)).ToGrpcModel();
 
-		public async ValueTask<UserAchievementsGrpcResponse> GetUserNewUnitAchievementsAsync(GetUserAchievementsGrpcRequest request) =>
-			(await _dtoRepository.GetNewAchievements(request.UserId)).ToGrpcModel();
+		public async ValueTask<UserAchievementsGrpcResponse> GetUserNewAchievementsAsync(GetUserAchievementsGrpcRequest request)
+		{
+			INewAchievementsDto achievements = request.Unit == null
+				? (INewAchievementsDto) await _dtoRepository.GetNewAchievementsTutorial(request.UserId)
+				: await _dtoRepository.GetNewAchievementsUnit(request.UserId);
+
+			return new UserAchievementsGrpcResponse
+			{
+				Items = achievements?.Achievements.ToArray()
+			};
+		}
 
 		/// <summary>
 		///     повзаимодействовал с персонажем

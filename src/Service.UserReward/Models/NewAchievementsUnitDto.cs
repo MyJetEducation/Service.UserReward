@@ -4,9 +4,9 @@ using Service.Education.Structure;
 
 namespace Service.UserReward.Models
 {
-	public class NewAchievementsDto
+	public class NewAchievementsUnitDto : INewAchievementsDto
 	{
-		public NewAchievementsDto(EducationTutorial tutorial, int unit)
+		public NewAchievementsUnitDto(EducationTutorial tutorial, int unit)
 		{
 			Tutorial = tutorial;
 			Unit = unit;

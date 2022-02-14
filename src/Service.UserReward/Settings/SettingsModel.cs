@@ -26,8 +26,11 @@ namespace Service.UserReward.Settings
 		[YamlProperty("UserReward.KeyUserAchievement")]
 		public string KeyUserAchievement { get; set; }
 
-		[YamlProperty("UserReward.KeyUserNewAchievement")]
-		public string KeyUserNewAchievement { get; set; }
+		[YamlProperty("UserReward.KeyUserNewAchievementUnit")]
+		public string KeyUserNewAchievementUnit { get; set; }
+
+		[YamlProperty("UserReward.KeyUserNewAchievementTutorial")]
+		public string KeyUserNewAchievementTutorial { get; set; }
 
 		[YamlProperty("UserReward.KeyEducationProgress")]
 		public string KeyEducationProgress { get; set; }

@@ -8,5 +8,8 @@ namespace Service.UserReward.Grpc.Models
 	{
 		[DataMember(Order = 1)]
 		public Guid? UserId { get; set; }
+
+		[DataMember(Order = 2)]
+		public int? Unit { get; set; }
 	}
 }

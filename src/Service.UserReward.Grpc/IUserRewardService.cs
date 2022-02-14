@@ -15,7 +15,7 @@ namespace Service.UserReward.Grpc
 		ValueTask<UserAchievementsGrpcResponse> GetUserAchievementsAsync(GetUserAchievementsGrpcRequest request);
 
 		[OperationContract]
-		ValueTask<UserAchievementsGrpcResponse> GetUserNewUnitAchievementsAsync(GetUserAchievementsGrpcRequest request);
+		ValueTask<UserAchievementsGrpcResponse> GetUserNewAchievementsAsync(GetUserAchievementsGrpcRequest request);
 
 		[OperationContract]
 		ValueTask<CommonGrpcResponse> MascotInteractionAsync(MascotInteractionGrpcRequest request);
