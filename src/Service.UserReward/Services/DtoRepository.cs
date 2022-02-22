@@ -8,6 +8,7 @@ using Service.Core.Client.Constants;
 using Service.Core.Client.Extensions;
 using Service.Core.Client.Models;
 using Service.EducationProgress.Domain.Models;
+using Service.Grpc;
 using Service.ServerKeyValue.Grpc;
 using Service.ServerKeyValue.Grpc.Models;
 using Service.UserReward.Models;
@@ -16,10 +17,10 @@ namespace Service.UserReward.Services
 {
 	public class DtoRepository : IDtoRepository
 	{
-		private readonly IServerKeyValueService _serverKeyValueService;
+		private readonly IGrpcServiceProxy<IServerKeyValueService> _serverKeyValueService;
 		private readonly ILogger<DtoRepository> _logger;
 
-		public DtoRepository(IServerKeyValueService serverKeyValueService, ILogger<DtoRepository> logger)
+		public DtoRepository(IGrpcServiceProxy<IServerKeyValueService> serverKeyValueService, ILogger<DtoRepository> logger)
 		{
 			_serverKeyValueService = serverKeyValueService;
 			_logger = logger;
@@ -84,11 +85,11 @@ namespace Service.UserReward.Services
 		private async ValueTask<CommonGrpcResponse> SetNewAchievementsDto<TDto>(Guid? userId, Func<string> keyFunc, TDto dto) where TDto: class, INewAchievementsDto
 		{
 			if (dto.Achievements.IsNullOrEmpty())
-				return await _serverKeyValueService.Delete(new ItemsDeleteGrpcRequest
+				return await _serverKeyValueService.TryCall(service => service.Delete(new ItemsDeleteGrpcRequest
 				{
 					UserId = userId,
 					Keys = new[] {keyFunc.Invoke()}
-				});
+				}));
 
 			return await SetData(keyFunc, userId, dto);
 		}
@@ -106,7 +107,7 @@ namespace Service.UserReward.Services
 
 		private async ValueTask<TDto[]> GetDataArray<TDto>(Func<string> settingsKeyFunc, Guid? userId)
 		{
-			string value = (await _serverKeyValueService.GetSingle(new ItemsGetSingleGrpcRequest
+			string value = (await _serverKeyValueService.Service.GetSingle(new ItemsGetSingleGrpcRequest
 			{
 				UserId = userId,
 				Key = settingsKeyFunc.Invoke()
@@ -119,7 +120,7 @@ namespace Service.UserReward.Services
 
 		private async ValueTask<TDto> GetDataSingle<TDto>(Func<string> settingsKeyFunc, Guid? userId) where TDto : class
 		{
-			string value = (await _serverKeyValueService.GetSingle(new ItemsGetSingleGrpcRequest
+			string value = (await _serverKeyValueService.Service.GetSingle(new ItemsGetSingleGrpcRequest
 			{
 				UserId = userId,
 				Key = settingsKeyFunc.Invoke()
@@ -132,7 +133,7 @@ namespace Service.UserReward.Services
 
 		private async ValueTask<CommonGrpcResponse> SetData<TDto>(Func<string> settingsKeyFunc, Guid? userId, TDto dto) where TDto : class
 		{
-			CommonGrpcResponse response = await _serverKeyValueService.Put(new ItemsPutGrpcRequest
+			CommonGrpcResponse response = await _serverKeyValueService.TryCall(service => service.Put(new ItemsPutGrpcRequest
 			{
 				UserId = userId,
 				Items = new[]
@@ -143,7 +144,7 @@ namespace Service.UserReward.Services
 						Value = JsonSerializer.Serialize(dto)
 					}
 				}
-			});
+			}));
 
 			if (!response.IsSuccess)
 				_logger.LogError("Can't save new data of type {type} for {user}", typeof (TDto).Name, userId);

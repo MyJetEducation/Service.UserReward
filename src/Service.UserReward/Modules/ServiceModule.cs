@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using Microsoft.Extensions.Logging;
 using MyJetWallet.Sdk.ServiceBus;
 using MyServiceBus.Abstractions;
 using MyServiceBus.TcpClient;
@@ -15,7 +16,8 @@ namespace Service.UserReward.Modules
 
 		protected override void Load(ContainerBuilder builder)
 		{
-			builder.RegisterServerKeyValueClient(Program.Settings.ServerKeyValueServiceUrl);
+			builder.RegisterServerKeyValueClient(Program.Settings.ServerKeyValueServiceUrl, Program.LogFactory.CreateLogger(typeof(ServerKeyValueClientFactory)));
+
 			builder.RegisterType<StatusRewardService>().AsImplementedInterfaces().SingleInstance();
 			builder.RegisterType<AchievementRewardService>().AsImplementedInterfaces().SingleInstance();
 			builder.RegisterType<DtoRepository>().AsImplementedInterfaces().SingleInstance();
