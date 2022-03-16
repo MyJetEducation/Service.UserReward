@@ -49,5 +49,8 @@ namespace Service.UserReward.Settings
 		
 		[YamlProperty("UserReward.TaskFinishedStepCount")]
 		public TaskFinishedStepCountSettingsModel TaskFinishedStepCount { get; set; }
+		
+		[YamlProperty("UserReward.UserTimeRewards")]
+		public UserTimeRewardsSettingsModel UserTimeRewards { get; set; }
 	}
 }

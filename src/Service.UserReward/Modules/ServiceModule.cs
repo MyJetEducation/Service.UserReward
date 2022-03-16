@@ -29,12 +29,14 @@ namespace Service.UserReward.Modules
 			builder.RegisterMyServiceBusSubscriberBatch<UserAccountFilledServiceBusModel>(serviceBusClient, UserAccountFilledServiceBusModel.TopicName, QueueName, TopicQueueType.Permanent);
 			builder.RegisterMyServiceBusSubscriberBatch<RetryUsedServiceBusModel>(serviceBusClient, RetryUsedServiceBusModel.TopicName, QueueName, TopicQueueType.Permanent);
 			builder.RegisterMyServiceBusSubscriberBatch<UserProgressUpdatedServiceBusModel>(serviceBusClient, UserProgressUpdatedServiceBusModel.TopicName, QueueName, TopicQueueType.Permanent);
+			builder.RegisterMyServiceBusSubscriberBatch<UserTimeChangedServiceBusModel>(serviceBusClient, UserTimeChangedServiceBusModel.TopicName, QueueName, TopicQueueType.Permanent);
 
 			builder.RegisterType<ProfilingFinishedNotificator>().AutoActivate().SingleInstance();
 			builder.RegisterType<SetProgressInfoNotificator>().AutoActivate().SingleInstance();
 			builder.RegisterType<UserAccountFilledNotificator>().AutoActivate().SingleInstance();
 			builder.RegisterType<RetryUsedNotificator>().AutoActivate().SingleInstance();
 			builder.RegisterType<UserProgressUpdatedNotificator>().AutoActivate().SingleInstance();
+			builder.RegisterType<UserTimeChangedNotificator>().AutoActivate().SingleInstance();
 		}
 	}
 }
