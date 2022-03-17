@@ -107,7 +107,7 @@ namespace Service.UserReward.Services
 				EducationProgressDto[] previousTutorialTasks = educationProgress.Where(dto => dto.Tutorial < currentTutorial).ToArray();
 
 				return previousTutorialTasks.All(dto => dto.IsMax()) && previousTutorialTasks.Any(dto => dto.Retries.GetValueOrDefault() > 0);
-			})
+			});
 
 			//закончил урок быстрее указанного времени
 			//.SetAchievement(UserAchievement.DoubleQuick, () => model.Duration.Seconds < SecondsForTaskSettingsModel.GetDefaultSeconds(taskType));
