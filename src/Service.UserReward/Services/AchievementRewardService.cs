@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Service.Core.Client.Constants;
+using Service.Core.Client.Extensions;
 using Service.Education.Constants;
 using Service.Education.Helpers;
 using Service.Education.Structure;
@@ -45,7 +46,7 @@ namespace Service.UserReward.Services
 			bool lowTaskScore = !taskProgress.IsOk();
 			int retries = taskProgress.Retries.GetValueOrDefault();
 			var tasksByTypeInfo = new Lazy<TaskByTypeInfo>(() => new TaskByTypeInfo(educationProgress));
-			bool passedAllWithoutRetries = educationProgress.All(dto => dto.Retries == null && dto.IsOk());
+			bool passedAllWithoutRetries = educationProgress.ForAll(dto => dto.Retries == null && dto.IsOk());
 
 			//закончил последний урок по первой дисциплине
 			achievements.SetAchievement(UserAchievement.Voila, () => tutorial == EducationTutorial.PersonalFinance && unit == structureTutorial.Units.Count && task == structureUnit.Tasks.Count)
@@ -60,13 +61,13 @@ namespace Service.UserReward.Services
 			.SetAchievement(UserAchievement.Trinity, () => taskType == EducationTaskType.TrueFalse && retries == 2 && !lowTaskScore)
 
 			//прошел первую дисциплину на 100%
-			.SetAchievement(UserAchievement.NowIKnow, () => educationProgress.Where(dto => dto.Tutorial == EducationTutorial.PersonalFinance).All(dto => dto.IsMax()))
+			.SetAchievement(UserAchievement.NowIKnow, () => educationProgress.Where(dto => dto.Tutorial == EducationTutorial.PersonalFinance).ForAll(dto => dto.IsMax()))
 
 			//прошел все уроки одного типа
-			.SetAchievement(UserAchievement.IveSeenThis, () => tasksByTypeInfo.Value.Data.Any(grouping => grouping.All(arg => arg.HasProgress)))
+			.SetAchievement(UserAchievement.IveSeenThis, () => tasksByTypeInfo.Value.Data.Any(grouping => grouping.ForAll(arg => arg.HasProgress)))
 
 			//прошел все уроки одного типа на 100%
-			.SetAchievement(UserAchievement.Bullseye, () => tasksByTypeInfo.Value.Data.Any(grouping => grouping.All(arg => arg.Value == Progress.MaxProgress)))
+			.SetAchievement(UserAchievement.Bullseye, () => tasksByTypeInfo.Value.Data.Any(grouping => grouping.ForAll(arg => arg.Value == Progress.MaxProgress)))
 
 			//прошел всё с одного раза не менее, чем с 80% результатом
 			.SetAchievement(UserAchievement.Split, () => passedAllWithoutRetries)
@@ -106,7 +107,7 @@ namespace Service.UserReward.Services
 
 				EducationProgressDto[] previousTutorialTasks = educationProgress.Where(dto => dto.Tutorial < currentTutorial).ToArray();
 
-				return previousTutorialTasks.All(dto => dto.IsMax()) && previousTutorialTasks.Any(dto => dto.Retries.GetValueOrDefault() > 0);
+				return previousTutorialTasks.ForAll(dto => dto.IsMax()) && previousTutorialTasks.Any(dto => dto.Retries.GetValueOrDefault() > 0);
 			});
 
 			//закончил урок быстрее указанного времени
