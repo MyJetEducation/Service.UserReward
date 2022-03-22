@@ -15,11 +15,15 @@ namespace Service.UserReward.Mappers
 
 		public static UserStatusesGrpcResponse ToGrpcModel(this IEnumerable<StatusDto> statuses) => new UserStatusesGrpcResponse
 		{
-			Items = statuses.Select(dto => new StatusGrpcModel
+			Items = statuses?.Select(dto => dto.ToGrpcModel()).ToArray()
+		};
+
+		public static StatusGrpcModel ToGrpcModel(this StatusDto dto) => dto == null
+			? null
+			: new StatusGrpcModel
 			{
 				Status = dto.Status,
 				Level = dto.Level
-			}).ToArray()
-		};
+			};
 	}
 }

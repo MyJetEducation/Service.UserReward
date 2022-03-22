@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Service.Core.Client.Constants;
 using Service.Core.Client.Models;
@@ -23,7 +25,15 @@ namespace Service.UserReward.Services
 		}
 
 		public async ValueTask<UserStatusesGrpcResponse> GetUserStatusesAsync(GetUserStatusesGrpcRequest request) =>
-			(await _dtoRepository.GetStatuses(request.UserId)).ToGrpcModel();
+			(await GetStatusList(request.UserId)).ToGrpcModel();
+
+		public async ValueTask<UserLastStatusGrpcResponse> GetUserLastStatusAsync(GetUserLastStatusGrpcRequest request) => new UserLastStatusGrpcResponse
+		{
+			Status = (await GetStatusList(request.UserId)).LastOrDefault().ToGrpcModel()
+		};
+
+		private async ValueTask<List<StatusDto>> GetStatusList(Guid? userId) =>
+			await _dtoRepository.GetStatuses(userId);
 
 		public async ValueTask<UserAchievementsGrpcResponse> GetUserAchievementsAsync(GetUserAchievementsGrpcRequest request) =>
 			(await _dtoRepository.GetAchievements(request.UserId)).ToGrpcModel();

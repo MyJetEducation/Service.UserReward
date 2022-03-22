@@ -12,6 +12,9 @@ namespace Service.UserReward.Grpc
 		ValueTask<UserStatusesGrpcResponse> GetUserStatusesAsync(GetUserStatusesGrpcRequest request);
 
 		[OperationContract]
+		ValueTask<UserLastStatusGrpcResponse> GetUserLastStatusAsync(GetUserLastStatusGrpcRequest request);
+
+		[OperationContract]
 		ValueTask<UserAchievementsGrpcResponse> GetUserAchievementsAsync(GetUserAchievementsGrpcRequest request);
 
 		[OperationContract]
