@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using DotNetCoreDecorators;
@@ -37,7 +36,7 @@ namespace Service.UserReward.Jobs
 		{
 			foreach (SetProgressInfoServiceBusModel message in events)
 			{
-				Guid? userId = message.UserId;
+				string userId = message.UserId;
 				(StatusInfo statuses, AchievementInfo achievements) = await _dtoRepository.GetAll(userId);
 				EducationProgressDto[] educationProgress = await _dtoRepository.GetEducationProgress(userId);
 
@@ -50,7 +49,7 @@ namespace Service.UserReward.Jobs
 			}
 		}
 
-		private async Task ProcessNewAchievements(Guid? userId, SetProgressInfoServiceBusModel message, AchievementInfo achievements)
+		private async Task ProcessNewAchievements(string userId, SetProgressInfoServiceBusModel message, AchievementInfo achievements)
 		{
 			if (message.IsRetry)
 				return;

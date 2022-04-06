@@ -22,7 +22,7 @@ namespace Service.UserReward.Services
 
 		public async ValueTask CheckByProgress(SetProgressInfoServiceBusModel model, EducationProgressDto[] educationProgress, StatusInfo statuses)
 		{
-			Guid? userId = model.UserId;
+			string userId = model.UserId;
 			int unit = model.Unit;
 			int task = model.Task;
 			EducationTutorial tutorial = model.Tutorial;

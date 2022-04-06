@@ -26,55 +26,55 @@ namespace Service.UserReward.Services
 			_logger = logger;
 		}
 
-		public async ValueTask<(StatusInfo, AchievementInfo)> GetAll(Guid? userId)
+		public async ValueTask<(StatusInfo, AchievementInfo)> GetAll(string userId)
 		{
 			return (new StatusInfo(await GetStatuses(userId)), new AchievementInfo(await GetAchievements(userId)));
 		}
 
-		public async ValueTask<List<StatusDto>> GetStatuses(Guid? userId)
+		public async ValueTask<List<StatusDto>> GetStatuses(string userId)
 		{
 			StatusDto[] statusDtos = await GetDataArray<StatusDto>(Program.ReloadedSettings(model => model.KeyUserStatus), userId);
 
 			return statusDtos.ToList();
 		}
 
-		public async ValueTask<List<UserAchievement>> GetAchievements(Guid? userId)
+		public async ValueTask<List<UserAchievement>> GetAchievements(string userId)
 		{
 			UserAchievement[] achievementDtos = await GetDataArray<UserAchievement>(Program.ReloadedSettings(model => model.KeyUserAchievement), userId);
 
 			return achievementDtos.ToList();
 		}
 
-		public async ValueTask<EducationProgressDto[]> GetEducationProgress(Guid? userId)
+		public async ValueTask<EducationProgressDto[]> GetEducationProgress(string userId)
 		{
 			return await GetDataArray<EducationProgressDto>(Program.ReloadedSettings(model => model.KeyEducationProgress), userId);
 		}
 
-		public async ValueTask<bool> SetStatuses(Guid? userId, StatusInfo statuses)
+		public async ValueTask<bool> SetStatuses(string userId, StatusInfo statuses)
 		{
 			CommonGrpcResponse commonGrpcResponse = await SetData(Program.ReloadedSettings(model => model.KeyUserStatus), userId, statuses.Items);
 
 			return commonGrpcResponse.IsSuccess;
 		}
 
-		public async ValueTask<bool> SetAchievements(Guid? userId, AchievementInfo achievements)
+		public async ValueTask<bool> SetAchievements(string userId, AchievementInfo achievements)
 		{
 			CommonGrpcResponse commonGrpcResponse = await SetData(Program.ReloadedSettings(model => model.KeyUserAchievement), userId, achievements.Items);
 
 			return commonGrpcResponse.IsSuccess;
 		}
 
-		public async ValueTask<NewAchievementsUnitDto> GetNewAchievementsUnit(Guid? userId)
+		public async ValueTask<NewAchievementsUnitDto> GetNewAchievementsUnit(string userId)
 		{
 			return await GetDataSingle<NewAchievementsUnitDto>(Program.ReloadedSettings(model => model.KeyUserNewAchievementUnit), userId);
 		}
 		
-		public async ValueTask<NewAchievementsTutorialDto> GetNewAchievementsTutorial(Guid? userId)
+		public async ValueTask<NewAchievementsTutorialDto> GetNewAchievementsTutorial(string userId)
 		{
 			return await GetDataSingle<NewAchievementsTutorialDto>(Program.ReloadedSettings(model => model.KeyUserNewAchievementTutorial), userId);
 		}
 
-		public async ValueTask<CommonGrpcResponse> SetNewAchievements(Guid? userId, NewAchievementsTutorialDto tutorialDto, NewAchievementsUnitDto unitDto)
+		public async ValueTask<CommonGrpcResponse> SetNewAchievements(string userId, NewAchievementsTutorialDto tutorialDto, NewAchievementsUnitDto unitDto)
 		{
 			CommonGrpcResponse resultTutorial = await SetNewAchievementsDto(userId, Program.ReloadedSettings(model => model.KeyUserNewAchievementTutorial), tutorialDto);
 			CommonGrpcResponse resultUnit = await SetNewAchievementsDto(userId, Program.ReloadedSettings(model => model.KeyUserNewAchievementUnit), unitDto);
@@ -82,7 +82,7 @@ namespace Service.UserReward.Services
 			return CommonGrpcResponse.Result(resultTutorial.IsSuccess && resultUnit.IsSuccess);
 		}
 
-		private async ValueTask<CommonGrpcResponse> SetNewAchievementsDto<TDto>(Guid? userId, Func<string> keyFunc, TDto dto) where TDto: class, INewAchievementsDto
+		private async ValueTask<CommonGrpcResponse> SetNewAchievementsDto<TDto>(string userId, Func<string> keyFunc, TDto dto) where TDto: class, INewAchievementsDto
 		{
 			if (dto.Achievements.IsNullOrEmpty())
 				return await _serverKeyValueService.TryCall(service => service.Delete(new ItemsDeleteGrpcRequest
@@ -94,18 +94,18 @@ namespace Service.UserReward.Services
 			return await SetData(keyFunc, userId, dto);
 		}
 
-		public async ValueTask<CommonGrpcResponse> ClearTestTasks100Prc(Guid? userId)
+		public async ValueTask<CommonGrpcResponse> ClearTestTasks100Prc(string userId)
 		{
 			return await SetData(Program.ReloadedSettings(model => model.KeyTestTasks100Prc), userId, new TestTasks100PrcDto());
 		}
 
-		public async ValueTask<TestTasks100PrcDto> GetTestTasks100Prc(Guid? userId)
+		public async ValueTask<TestTasks100PrcDto> GetTestTasks100Prc(string userId)
 		{
 			return await GetDataSingle<TestTasks100PrcDto>(Program.ReloadedSettings(model => model.KeyTestTasks100Prc), userId)
 				?? new TestTasks100PrcDto();
 		}
 
-		private async ValueTask<TDto[]> GetDataArray<TDto>(Func<string> settingsKeyFunc, Guid? userId)
+		private async ValueTask<TDto[]> GetDataArray<TDto>(Func<string> settingsKeyFunc, string userId)
 		{
 			string value = (await _serverKeyValueService.Service.GetSingle(new ItemsGetSingleGrpcRequest
 			{
@@ -118,7 +118,7 @@ namespace Service.UserReward.Services
 				: JsonSerializer.Deserialize<TDto[]>(value);
 		}
 
-		private async ValueTask<TDto> GetDataSingle<TDto>(Func<string> settingsKeyFunc, Guid? userId) where TDto : class
+		private async ValueTask<TDto> GetDataSingle<TDto>(Func<string> settingsKeyFunc, string userId) where TDto : class
 		{
 			string value = (await _serverKeyValueService.Service.GetSingle(new ItemsGetSingleGrpcRequest
 			{
@@ -131,7 +131,7 @@ namespace Service.UserReward.Services
 				: JsonSerializer.Deserialize<TDto>(value);
 		}
 
-		private async ValueTask<CommonGrpcResponse> SetData<TDto>(Func<string> settingsKeyFunc, Guid? userId, TDto dto) where TDto : class
+		private async ValueTask<CommonGrpcResponse> SetData<TDto>(Func<string> settingsKeyFunc, string userId, TDto dto) where TDto : class
 		{
 			CommonGrpcResponse response = await _serverKeyValueService.TryCall(service => service.Put(new ItemsPutGrpcRequest
 			{

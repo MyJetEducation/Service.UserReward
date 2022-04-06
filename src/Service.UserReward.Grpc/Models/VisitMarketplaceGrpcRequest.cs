@@ -1,5 +1,4 @@
-﻿using System;
-using System.Runtime.Serialization;
+﻿using System.Runtime.Serialization;
 
 namespace Service.UserReward.Grpc.Models
 {
@@ -7,6 +6,6 @@ namespace Service.UserReward.Grpc.Models
 	public class VisitMarketplaceGrpcRequest
 	{
 		[DataMember(Order = 1)]
-		public Guid? UserId { get; set; }
+		public string UserId { get; set; }
 	}
 }

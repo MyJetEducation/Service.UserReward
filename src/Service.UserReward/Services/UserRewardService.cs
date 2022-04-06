@@ -32,7 +32,7 @@ namespace Service.UserReward.Services
 			Status = (await GetStatusList(request.UserId)).LastOrDefault().ToGrpcModel()
 		};
 
-		private async ValueTask<List<StatusDto>> GetStatusList(Guid? userId) =>
+		private async ValueTask<List<StatusDto>> GetStatusList(string userId) =>
 			await _dtoRepository.GetStatuses(userId);
 
 		public async ValueTask<UserAchievementsGrpcResponse> GetUserAchievementsAsync(GetUserAchievementsGrpcRequest request) =>
@@ -71,7 +71,7 @@ namespace Service.UserReward.Services
 			statuses.SetStatus(UserStatus.SecondYearStudent, () => request.Tutorial == EducationTutorial.BehavioralFinance && request.Unit == null && request.Task == null);
 		});
 
-		private async ValueTask<CommonGrpcResponse> Process(Guid? userId, Action<StatusInfo, AchievementInfo> action)
+		private async ValueTask<CommonGrpcResponse> Process(string userId, Action<StatusInfo, AchievementInfo> action)
 		{
 			(StatusInfo statuses, AchievementInfo achievements) = await _dtoRepository.GetAll(userId);
 

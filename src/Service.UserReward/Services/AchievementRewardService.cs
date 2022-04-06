@@ -11,7 +11,6 @@ using Service.ServiceBus.Models;
 using Service.UserReward.Constants;
 using Service.UserReward.Helpers;
 using Service.UserReward.Models;
-using Service.UserReward.Settings;
 
 namespace Service.UserReward.Services
 {
