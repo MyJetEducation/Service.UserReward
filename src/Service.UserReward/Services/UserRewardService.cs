@@ -51,12 +51,6 @@ namespace Service.UserReward.Services
 		}
 
 		/// <summary>
-		///     повзаимодействовал с персонажем
-		/// </summary>
-		public async ValueTask<CommonGrpcResponse> MascotInteractionAsync(MascotInteractionGrpcRequest request) =>
-			await Process(request.UserId, (statuses, achievements) => achievements.SetAchievement(UserAchievement.FirstTouch));
-
-		/// <summary>
 		///     впервые зашел в marketplace (вне онбординга)
 		/// </summary>
 		public async ValueTask<CommonGrpcResponse> VisitMarketplace(VisitMarketplaceGrpcRequest request) =>

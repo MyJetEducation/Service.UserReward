@@ -34,10 +34,7 @@ namespace Service.UserReward.Helpers
 			(UserAchievement.Starter, AchievementType.Standard),
 			(UserAchievement.Ignition, AchievementType.Standard),
 			(UserAchievement.Voila, AchievementType.Standard),
-			(UserAchievement.Welcome, AchievementType.Standard),
-			(UserAchievement.FirstTouch, AchievementType.Standard),
 			(UserAchievement.Eyescatter, AchievementType.Standard),
-			(UserAchievement.PjFry, AchievementType.Standard),
 			(UserAchievement.SoEasy, AchievementType.Standard),
 			(UserAchievement.Habitant, AchievementType.Standard),
 			(UserAchievement.GreenArrow, AchievementType.Standard),
@@ -48,16 +45,10 @@ namespace Service.UserReward.Helpers
 			(UserAchievement.TakeYourTime, AchievementType.Rare),
 			(UserAchievement.ALongWay, AchievementType.Rare),
 			(UserAchievement.IveSeenThis, AchievementType.Rare),
-			(UserAchievement.Bender, AchievementType.Rare),
 			(UserAchievement.TheSeeker, AchievementType.Rare),
-			(UserAchievement.TheGreatChanger, AchievementType.Rare),
-			(UserAchievement.WeGotCompany, AchievementType.Rare),
-			(UserAchievement.Companion, AchievementType.Rare),
-			(UserAchievement.NewBeginning, AchievementType.Rare),
 			(UserAchievement.BadLuck, AchievementType.Rare),
 			(UserAchievement.Unstoppable, AchievementType.Rare),
 			(UserAchievement.Paradox, AchievementType.Rare),
-			(UserAchievement.Spender, AchievementType.Rare),
 			(UserAchievement.Trinity, AchievementType.Rare),
 
 			//SuperRare
@@ -67,26 +58,19 @@ namespace Service.UserReward.Helpers
 			(UserAchievement.DoubleQuick, AchievementType.SuperRare),
 			(UserAchievement.RareCollector, AchievementType.SuperRare),
 			(UserAchievement.Flash, AchievementType.SuperRare),
-			(UserAchievement.YouCantHide, AchievementType.SuperRare),
-			(UserAchievement.FaceTime, AchievementType.SuperRare),
 			(UserAchievement.TheHabitMaster, AchievementType.SuperRare),
-			(UserAchievement.Dwarf, AchievementType.SuperRare),
 			(UserAchievement.Stability, AchievementType.SuperRare),
 
 			//UltraRare
 			(UserAchievement.CheckMe, AchievementType.UltraRare),
 			(UserAchievement.SuperRareCollector, AchievementType.UltraRare),
-			(UserAchievement.AllTheKingsMen, AchievementType.UltraRare),
 			(UserAchievement.RoundTheWorld, AchievementType.UltraRare),
-			(UserAchievement.DayByDay, AchievementType.UltraRare),
-			(UserAchievement.InStore, AchievementType.UltraRare),
 
 			//Standard
 			(UserAchievement.UltraRareCollector, AchievementType.Unique),
 			(UserAchievement.Curious, AchievementType.Unique),
 			(UserAchievement.TaDam, AchievementType.Unique),
 			(UserAchievement.NotSoHard, AchievementType.Unique),
-			(UserAchievement.MyPride, AchievementType.Unique),
 			(UserAchievement.Split, AchievementType.Unique)
 		};
 
