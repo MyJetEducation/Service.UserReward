@@ -21,9 +21,6 @@ namespace Service.UserReward.Grpc
 		ValueTask<UserAchievementsGrpcResponse> GetUserNewAchievementsAsync(GetUserAchievementsGrpcRequest request);
 
 		[OperationContract]
-		ValueTask<CommonGrpcResponse> MascotInteractionAsync(MascotInteractionGrpcRequest request);
-
-		[OperationContract]
 		ValueTask<CommonGrpcResponse> LearningStartedAsync(LearningStartedGrpcRequest request);
 		
 		[OperationContract]

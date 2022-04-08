@@ -32,7 +32,7 @@ namespace Service.UserReward.Services
 			Status = (await GetStatusList(request.UserId)).LastOrDefault().ToGrpcModel()
 		};
 
-		private async ValueTask<List<StatusDto>> GetStatusList(Guid? userId) =>
+		private async ValueTask<List<StatusDto>> GetStatusList(string userId) =>
 			await _dtoRepository.GetStatuses(userId);
 
 		public async ValueTask<UserAchievementsGrpcResponse> GetUserAchievementsAsync(GetUserAchievementsGrpcRequest request) =>
@@ -51,12 +51,6 @@ namespace Service.UserReward.Services
 		}
 
 		/// <summary>
-		///     повзаимодействовал с персонажем
-		/// </summary>
-		public async ValueTask<CommonGrpcResponse> MascotInteractionAsync(MascotInteractionGrpcRequest request) =>
-			await Process(request.UserId, (statuses, achievements) => achievements.SetAchievement(UserAchievement.FirstTouch));
-
-		/// <summary>
 		///     впервые зашел в marketplace (вне онбординга)
 		/// </summary>
 		public async ValueTask<CommonGrpcResponse> VisitMarketplace(VisitMarketplaceGrpcRequest request) =>
@@ -71,7 +65,7 @@ namespace Service.UserReward.Services
 			statuses.SetStatus(UserStatus.SecondYearStudent, () => request.Tutorial == EducationTutorial.BehavioralFinance && request.Unit == null && request.Task == null);
 		});
 
-		private async ValueTask<CommonGrpcResponse> Process(Guid? userId, Action<StatusInfo, AchievementInfo> action)
+		private async ValueTask<CommonGrpcResponse> Process(string userId, Action<StatusInfo, AchievementInfo> action)
 		{
 			(StatusInfo statuses, AchievementInfo achievements) = await _dtoRepository.GetAll(userId);
 

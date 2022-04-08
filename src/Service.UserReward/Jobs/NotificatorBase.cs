@@ -19,7 +19,7 @@ namespace Service.UserReward.Jobs
 			_logger = logger;
 		}
 
-		protected async ValueTask Process(Guid? userId, Action<StatusInfo, AchievementInfo> action)
+		protected async ValueTask Process(string userId, Action<StatusInfo, AchievementInfo> action)
 		{
 			_logger.LogDebug("ServiceBus Notificator {notificator} handled message for {user}", GetType().Name, userId);
 

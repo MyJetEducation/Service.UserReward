@@ -10,21 +10,21 @@ namespace Service.UserReward.Services
 {
 	public interface IDtoRepository
 	{
-		ValueTask<EducationProgressDto[]> GetEducationProgress(Guid? userId);
+		ValueTask<EducationProgressDto[]> GetEducationProgress(string userId);
 
-		ValueTask<(StatusInfo, AchievementInfo)> GetAll(Guid? userId);
+		ValueTask<(StatusInfo, AchievementInfo)> GetAll(string userId);
 
-		ValueTask<List<StatusDto>> GetStatuses(Guid? userId);
-		ValueTask<bool> SetStatuses(Guid? userId, StatusInfo statuses);
+		ValueTask<List<StatusDto>> GetStatuses(string userId);
+		ValueTask<bool> SetStatuses(string userId, StatusInfo statuses);
 
-		ValueTask<List<UserAchievement>> GetAchievements(Guid? userId);
-		ValueTask<bool> SetAchievements(Guid? userId, AchievementInfo achievements);
+		ValueTask<List<UserAchievement>> GetAchievements(string userId);
+		ValueTask<bool> SetAchievements(string userId, AchievementInfo achievements);
 
-		ValueTask<NewAchievementsTutorialDto> GetNewAchievementsTutorial(Guid? userId);
-		ValueTask<NewAchievementsUnitDto> GetNewAchievementsUnit(Guid? userId);
-		ValueTask<CommonGrpcResponse> SetNewAchievements(Guid? userId, NewAchievementsTutorialDto tutorialDto, NewAchievementsUnitDto unitDto);
+		ValueTask<NewAchievementsTutorialDto> GetNewAchievementsTutorial(string userId);
+		ValueTask<NewAchievementsUnitDto> GetNewAchievementsUnit(string userId);
+		ValueTask<CommonGrpcResponse> SetNewAchievements(string userId, NewAchievementsTutorialDto tutorialDto, NewAchievementsUnitDto unitDto);
 
-		ValueTask<TestTasks100PrcDto> GetTestTasks100Prc(Guid? userId);
-		ValueTask<CommonGrpcResponse> ClearTestTasks100Prc(Guid? userId);
+		ValueTask<TestTasks100PrcDto> GetTestTasks100Prc(string userId);
+		ValueTask<CommonGrpcResponse> ClearTestTasks100Prc(string userId);
 	}
 }
