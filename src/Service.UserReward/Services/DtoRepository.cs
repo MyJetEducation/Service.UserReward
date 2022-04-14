@@ -50,7 +50,9 @@ namespace Service.UserReward.Services
 		{
 			EducationProgressDto[] educationProgressDtos = await GetDataArray<EducationProgressDto>(Program.ReloadedSettings(model => model.KeyEducationProgress), userId);
 
-			return educationProgressDtos ?? GetEmptyProgress();
+			return educationProgressDtos.IsNullOrEmpty()
+				? GetEmptyProgress()
+				: educationProgressDtos;
 		}
 
 		public static EducationProgressDto[] GetEmptyProgress() => EducationHelper.GetProjections()
