@@ -20,6 +20,9 @@ namespace Service.UserReward.Settings
 		[YamlProperty("UserReward.ServerKeyValueServiceUrl")]
 		public string ServerKeyValueServiceUrl { get; set; }
 
+		[YamlProperty("UserReward.EducationProgressServiceUrl")]
+		public string EducationProgressServiceUrl { get; set; }
+
 		[YamlProperty("UserReward.KeyUserStatus")]
 		public string KeyUserStatus { get; set; }
 
@@ -31,9 +34,6 @@ namespace Service.UserReward.Settings
 
 		[YamlProperty("UserReward.KeyUserNewAchievementTutorial")]
 		public string KeyUserNewAchievementTutorial { get; set; }
-
-		[YamlProperty("UserReward.KeyEducationProgress")]
-		public string KeyEducationProgress { get; set; }
 
 		[YamlProperty("UserReward.KeyTestTasks100Prc")]
 		public string KeyTestTasks100Prc { get; set; }

@@ -10,8 +10,6 @@ namespace Service.UserReward.Services
 {
 	public interface IDtoRepository
 	{
-		ValueTask<EducationProgressDto[]> GetEducationProgress(string userId);
-
 		ValueTask<(StatusInfo, AchievementInfo)> GetAll(string userId);
 
 		ValueTask<List<StatusDto>> GetStatuses(string userId);

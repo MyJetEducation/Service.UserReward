@@ -2,18 +2,18 @@
 using System.Linq;
 using Service.Education.Helpers;
 using Service.Education.Structure;
-using Service.EducationProgress.Domain.Models;
+using Service.EducationProgress.Grpc.Models;
 
 namespace Service.UserReward.Services
 {
 	public class TaskByTypeInfo
 	{
-		public TaskByTypeInfo(IEnumerable<EducationProgressDto> educationProgress)
+		public TaskByTypeInfo(IEnumerable<EducationProgressTaskDataGrpcModel> educationProgress)
 		{
 			Data = educationProgress.Select(dto => new TaskByTypeDto
 			{
 				Value = dto.Value,
-				HasProgress = dto.HasProgress,
+				HasProgress = dto.HasProgress(),
 				TaskType = EducationHelper.GetTask(dto.Tutorial, dto.Unit, dto.Task).TaskType
 			}).GroupBy(arg => arg.TaskType).ToArray();
 		}

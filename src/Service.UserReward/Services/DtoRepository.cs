@@ -7,7 +7,6 @@ using Microsoft.Extensions.Logging;
 using Service.Core.Client.Constants;
 using Service.Core.Client.Extensions;
 using Service.Core.Client.Models;
-using Service.Education.Helpers;
 using Service.EducationProgress.Domain.Models;
 using Service.Grpc;
 using Service.ServerKeyValue.Grpc;
@@ -45,19 +44,6 @@ namespace Service.UserReward.Services
 
 			return achievementDtos.ToList();
 		}
-
-		public async ValueTask<EducationProgressDto[]> GetEducationProgress(string userId)
-		{
-			EducationProgressDto[] educationProgressDtos = await GetDataArray<EducationProgressDto>(Program.ReloadedSettings(model => model.KeyEducationProgress), userId);
-
-			return educationProgressDtos.IsNullOrEmpty()
-				? GetEmptyProgress()
-				: educationProgressDtos;
-		}
-
-		public static EducationProgressDto[] GetEmptyProgress() => EducationHelper.GetProjections()
-			.Select(item => new EducationProgressDto(item.Tutorial, item.Unit, item.Task))
-			.ToArray();
 
 		public async ValueTask<bool> SetStatuses(string userId, StatusInfo statuses)
 		{

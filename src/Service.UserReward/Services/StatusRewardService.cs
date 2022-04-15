@@ -7,6 +7,7 @@ using Service.Education.Constants;
 using Service.Education.Helpers;
 using Service.Education.Structure;
 using Service.EducationProgress.Domain.Models;
+using Service.EducationProgress.Grpc.Models;
 using Service.ServiceBus.Models;
 using Service.UserReward.Constants;
 using Service.UserReward.Helpers;
@@ -20,7 +21,7 @@ namespace Service.UserReward.Services
 
 		public StatusRewardService(IDtoRepository dtoRepository) => _dtoRepository = dtoRepository;
 
-		public async ValueTask CheckByProgress(SetProgressInfoServiceBusModel model, EducationProgressDto[] educationProgress, StatusInfo statuses)
+		public async ValueTask CheckByProgress(SetProgressInfoServiceBusModel model, EducationProgressTaskDataGrpcModel[] educationProgress, StatusInfo statuses)
 		{
 			string userId = model.UserId;
 			int unit = model.Unit;
@@ -64,14 +65,14 @@ namespace Service.UserReward.Services
 			}
 		}
 
-		private static bool IsTutorialLearned(IEnumerable<EducationProgressDto> educationProgress, EducationTutorial tutorial)
+		private static bool IsTutorialLearned(IEnumerable<EducationProgressTaskDataGrpcModel> educationProgress, EducationTutorial tutorial)
 		{
-			EducationProgressDto[] educationProgressDtos = educationProgress.Where(dto => dto.Tutorial == tutorial).ToArray();
+			EducationProgressTaskDataGrpcModel[] educationProgressDtos = educationProgress.Where(dto => dto.Tutorial == tutorial).ToArray();
 
 			return educationProgressDtos.Any() && educationProgressDtos.Average(dto => dto.Value.GetValueOrDefault()) >= Progress.OkProgress;
 		}
 
-		private static Dictionary<EducationTaskType, int> GetTasksByType(IEnumerable<EducationProgressDto> educationProgress) => educationProgress
+		private static Dictionary<EducationTaskType, int> GetTasksByType(IEnumerable<EducationProgressTaskDataGrpcModel> educationProgress) => educationProgress
 			.GroupBy(dto => EducationHelper.GetTask(dto.Tutorial, dto.Unit, dto.Task).TaskType)
 			.ToDictionary(grouping => grouping.Key, grouping =>
 				grouping.Count(arg => arg.IsOk()));

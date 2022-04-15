@@ -6,7 +6,7 @@ using Service.Core.Client.Extensions;
 using Service.Education.Constants;
 using Service.Education.Helpers;
 using Service.Education.Structure;
-using Service.EducationProgress.Domain.Models;
+using Service.EducationProgress.Grpc.Models;
 using Service.ServiceBus.Models;
 using Service.UserReward.Constants;
 using Service.UserReward.Helpers;
@@ -26,7 +26,7 @@ namespace Service.UserReward.Services
 			(UserStatus.Rewarded, 3)
 		};
 
-		public void CheckByProgress(SetProgressInfoServiceBusModel model, EducationProgressDto[] educationProgress, AchievementInfo achievements)
+		public void CheckByProgress(SetProgressInfoServiceBusModel model, EducationProgressTaskDataGrpcModel[] educationProgress, AchievementInfo achievements)
 		{
 			int unit = model.Unit;
 			int task = model.Task;
@@ -37,7 +37,7 @@ namespace Service.UserReward.Services
 			EducationStructureTutorial structureTutorial = EducationStructure.Tutorials[tutorial];
 			EducationStructureUnit structureUnit = structureTutorial.Units[unit];
 
-			EducationProgressDto taskProgress = educationProgress
+			EducationProgressTaskDataGrpcModel taskProgress = educationProgress
 				.Where(dto => dto.Tutorial == tutorial)
 				.Where(dto => dto.Unit == unit)
 				.First(dto => dto.Task == task);
@@ -89,7 +89,7 @@ namespace Service.UserReward.Services
 			.SetAchievement(UserAchievement.Unstoppable, () =>
 			{
 				int todayFinishedUnits = educationProgress
-					.GroupBy(dto => new {dto.Tutorial, dto.Unit}, dto => new {dto.Value, dto.HasProgress, dto.Date})
+					.GroupBy(dto => new {dto.Tutorial, dto.Unit}, dto => new {dto.Value, HasProgress = dto.HasProgress(), dto.Date})
 					.Count(grouping =>
 						grouping.Average(arg => arg.Value) >= Progress.OkProgress
 							&& grouping.All(arg => arg.HasProgress && arg.Date.HasValue && arg.Date.Value.Date == DateTime.UtcNow.Date));
@@ -104,7 +104,7 @@ namespace Service.UserReward.Services
 				if (currentTutorial == EducationTutorial.PersonalFinance)
 					return false;
 
-				EducationProgressDto[] previousTutorialTasks = educationProgress.Where(dto => dto.Tutorial < currentTutorial).ToArray();
+				EducationProgressTaskDataGrpcModel[] previousTutorialTasks = educationProgress.Where(dto => dto.Tutorial < currentTutorial).ToArray();
 
 				return previousTutorialTasks.ForAll(dto => dto.IsMax()) && previousTutorialTasks.Any(dto => dto.Retries.GetValueOrDefault() > 0);
 			});
@@ -113,16 +113,16 @@ namespace Service.UserReward.Services
 			//.SetAchievement(UserAchievement.DoubleQuick, () => model.Duration.Seconds < SecondsForTaskSettingsModel.GetDefaultSeconds(taskType));
 		}
 
-		private static EducationTutorial GetCurrentTutorial(EducationProgressDto[] educationProgress)
+		private static EducationTutorial GetCurrentTutorial(EducationProgressTaskDataGrpcModel[] educationProgress)
 		{
 			EducationTutorial currentTutorial = educationProgress
 				.OrderByDescending(dto => dto.Tutorial)
-				.Where(dto => dto.HasProgress).Select(dto => dto.Tutorial)
+				.Where(dto => dto.HasProgress()).Select(dto => dto.Tutorial)
 				.FirstOrDefault();
 
 			if (currentTutorial != EducationTutorial.Economics && educationProgress
 				.Where(dto => dto.Tutorial == currentTutorial)
-				.All(dto => dto.HasProgress))
+				.All(dto => dto.HasProgress()))
 				currentTutorial++;
 
 			return currentTutorial;

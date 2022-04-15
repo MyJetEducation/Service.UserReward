@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using MyJetWallet.Sdk.ServiceBus;
 using MyServiceBus.Abstractions;
 using MyServiceBus.TcpClient;
+using Service.EducationProgress.Client;
 using Service.ServerKeyValue.Client;
 using Service.ServiceBus.Models;
 using Service.UserReward.Jobs;
@@ -17,6 +18,7 @@ namespace Service.UserReward.Modules
 		protected override void Load(ContainerBuilder builder)
 		{
 			builder.RegisterServerKeyValueClient(Program.Settings.ServerKeyValueServiceUrl, Program.LogFactory.CreateLogger(typeof(ServerKeyValueClientFactory)));
+			builder.RegisterEducationProgressClient(Program.Settings.EducationProgressServiceUrl);
 
 			builder.RegisterType<StatusRewardService>().AsImplementedInterfaces().SingleInstance();
 			builder.RegisterType<AchievementRewardService>().AsImplementedInterfaces().SingleInstance();
