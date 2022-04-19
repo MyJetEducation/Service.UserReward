@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using MyJetWallet.Sdk.ServiceBus;
 using MyServiceBus.Abstractions;
 using MyServiceBus.TcpClient;
+using Service.Core.Client.Services;
 using Service.EducationProgress.Client;
 using Service.ServerKeyValue.Client;
 using Service.ServiceBus.Models;
@@ -24,6 +25,7 @@ namespace Service.UserReward.Modules
 			builder.RegisterType<AchievementRewardService>().AsImplementedInterfaces().SingleInstance();
 			builder.RegisterType<DtoRepository>().AsImplementedInterfaces().SingleInstance();
 			builder.RegisterType<TotalRewardService>().AsImplementedInterfaces().SingleInstance();
+			builder.RegisterType<SystemClock>().AsImplementedInterfaces().SingleInstance();
 
 			MyServiceBusTcpClient serviceBusClient = builder.RegisterMyServiceBusTcpClient(Program.ReloadedSettings(e => e.ServiceBusReader), Program.LogFactory);
 			builder.RegisterMyServiceBusSubscriberBatch<ProfilingFinishedServiceBusModel>(serviceBusClient, ProfilingFinishedServiceBusModel.TopicName, QueueName, TopicQueueType.Permanent);
