@@ -52,6 +52,13 @@ namespace Service.UserReward.Services
 			return commonGrpcResponse.IsSuccess;
 		}
 
+		public async ValueTask<bool> SetPurchaseDates(string userId, DateTime[] dateTimes)
+		{
+			CommonGrpcResponse commonGrpcResponse = await SetData(Program.ReloadedSettings(model => model.KeyPurchaseDates), userId, dateTimes);
+
+			return commonGrpcResponse.IsSuccess;
+		}
+
 		public async ValueTask<bool> SetAchievements(string userId, AchievementInfo achievements)
 		{
 			CommonGrpcResponse commonGrpcResponse = await SetData(Program.ReloadedSettings(model => model.KeyUserAchievement), userId, achievements.Items);
@@ -98,6 +105,12 @@ namespace Service.UserReward.Services
 		{
 			return await GetDataSingle<TestTasks100PrcDto>(Program.ReloadedSettings(model => model.KeyTestTasks100Prc), userId)
 				?? new TestTasks100PrcDto();
+		}
+
+		public async ValueTask<DateTime[]> GetPurchaseDates(string userId)
+		{
+			return await GetDataSingle<DateTime[]>(Program.ReloadedSettings(model => model.KeyPurchaseDates), userId)
+				?? Array.Empty<DateTime>();
 		}
 
 		private async ValueTask<TDto[]> GetDataArray<TDto>(Func<string> settingsKeyFunc, string userId)

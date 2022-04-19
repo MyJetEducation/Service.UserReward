@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Service.Core.Client.Constants;
+using Service.Core.Client.Extensions;
 using Service.UserReward.Constants;
 using Service.UserReward.Models;
 
@@ -8,6 +9,8 @@ namespace Service.UserReward.Helpers
 {
 	public static class AchievementHelper
 	{
+		public const int WeekDays = 7;
+
 		public static AchievementInfo SetAchievement(this AchievementInfo info, UserAchievement achievement, Func<bool> predicate)
 		{
 			if (info.Items.Contains(achievement) || !predicate.Invoke())
@@ -31,7 +34,6 @@ namespace Service.UserReward.Helpers
 		public static (UserAchievement achievement, AchievementType type)[] AchievementTypeInfo => new (UserAchievement achievement, AchievementType type)[]
 		{
 			//Standard
-			(UserAchievement.Starter, AchievementType.Standard),
 			(UserAchievement.Ignition, AchievementType.Standard),
 			(UserAchievement.Voila, AchievementType.Standard),
 			(UserAchievement.Eyescatter, AchievementType.Standard),
@@ -93,6 +95,21 @@ namespace Service.UserReward.Helpers
 				where func.Invoke(typeInfo.type)
 				select achievement)
 				.Count();
+		}
+
+		public static bool CheckPurchaseDates(int weeksCount, DateTime[] dates)
+		{
+			if (dates.IsNullOrEmpty())
+				return false;
+
+			DateTime today = dates.Last();
+
+			for (var dispDay = 0; dispDay <= WeekDays - 1; dispDay++)
+				if (Enumerable.Range(1, weeksCount)
+					.All(weekNum => dates.Any(dt => today.AddDays(-1 * WeekDays * weekNum + dispDay) <= dt && dt <= today.AddDays(-1 * WeekDays * (weekNum - 1) + dispDay))))
+					return true;
+
+			return false;
 		}
 	}
 }

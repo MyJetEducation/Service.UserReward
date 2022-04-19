@@ -8,22 +8,22 @@ namespace Service.UserReward.Jobs
 {
 	public abstract class NotificatorBase
 	{
-		private readonly IDtoRepository _dtoRepository;
+		protected readonly IDtoRepository DtoRepository;
 		private readonly ITotalRewardService _totalRewardService;
-		private readonly ILogger _logger;
+		protected readonly ILogger Logger;
 
 		protected NotificatorBase(IDtoRepository dtoRepository, ITotalRewardService totalRewardService, ILogger logger)
 		{
-			_dtoRepository = dtoRepository;
+			DtoRepository = dtoRepository;
 			_totalRewardService = totalRewardService;
-			_logger = logger;
+			Logger = logger;
 		}
 
 		protected async ValueTask Process(string userId, Action<StatusInfo, AchievementInfo> action)
 		{
-			_logger.LogDebug("ServiceBus Notificator {notificator} handled message for {user}", GetType().Name, userId);
+			Logger.LogDebug("ServiceBus Notificator {notificator} handled message for {user}", GetType().Name, userId);
 
-			(StatusInfo statuses, AchievementInfo achievements) = await _dtoRepository.GetAll(userId);
+			(StatusInfo statuses, AchievementInfo achievements) = await DtoRepository.GetAll(userId);
 
 			action.Invoke(statuses, achievements);
 

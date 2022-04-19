@@ -38,6 +38,12 @@ namespace Service.UserReward.Settings
 		[YamlProperty("UserReward.KeyTestTasks100Prc")]
 		public string KeyTestTasks100Prc { get; set; }
 
+		[YamlProperty("UserReward.KeyPurchaseDates")]
+		public string KeyPurchaseDates { get; set; }
+
+		[YamlProperty("UserReward.DoubleQuickWeekCount")]
+		public int DoubleQuickWeekCount { get; set; }
+
 		[YamlProperty("UserReward.BadLuckAchievementRetriesCount")]
 		public int BadLuckAchievementRetriesCount { get; set; }
 

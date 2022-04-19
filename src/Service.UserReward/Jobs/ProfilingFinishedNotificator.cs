@@ -25,9 +25,6 @@ namespace Service.UserReward.Jobs
 				{
 					//пройдено длинное профилирование
 					statuses.SetStatus(UserStatus.MasterOfOpenness, () => message.Long);
-
-					//закончил профилирование
-					achievements.SetAchievement(UserAchievement.Starter, () => !message.Long);
 				});
 			}
 		}

@@ -24,5 +24,8 @@ namespace Service.UserReward.Services
 
 		ValueTask<TestTasks100PrcDto> GetTestTasks100Prc(string userId);
 		ValueTask<CommonGrpcResponse> ClearTestTasks100Prc(string userId);
+
+		ValueTask<bool> SetPurchaseDates(string userId, DateTime[] dateTimes);
+		ValueTask<DateTime[]> GetPurchaseDates(string userId);
 	}
 }

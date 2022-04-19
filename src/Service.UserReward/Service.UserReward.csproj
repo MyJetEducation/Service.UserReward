@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Service.UserReward.Domain.Models\Service.UserReward.Domain.Models.csproj" />
     <ProjectReference Include="..\Service.UserReward.Grpc\Service.UserReward.Grpc.csproj" />
   </ItemGroup>
 
