@@ -9,7 +9,7 @@ using Service.Education.Structure;
 using Service.EducationProgress.Domain.Models;
 using Service.EducationProgress.Grpc.Models;
 using Service.ServiceBus.Models;
-using Service.UserReward.Constants;
+using Service.UserReward.Domain;
 using Service.UserReward.Helpers;
 using Service.UserReward.Models;
 

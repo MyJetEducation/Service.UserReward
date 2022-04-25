@@ -1,4 +1,4 @@
-﻿namespace Service.UserReward.Constants
+﻿namespace Service.UserReward.Domain
 {
 	public enum AchievementType
 	{

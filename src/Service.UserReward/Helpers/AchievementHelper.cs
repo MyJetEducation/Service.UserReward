@@ -2,7 +2,7 @@
 using System.Linq;
 using Service.Core.Client.Constants;
 using Service.Core.Client.Extensions;
-using Service.UserReward.Constants;
+using Service.UserReward.Domain;
 using Service.UserReward.Models;
 
 namespace Service.UserReward.Helpers
@@ -31,51 +31,6 @@ namespace Service.UserReward.Helpers
 			return info;
 		}
 
-		public static (UserAchievement achievement, AchievementType type)[] AchievementTypeInfo => new (UserAchievement achievement, AchievementType type)[]
-		{
-			//Standard
-			(UserAchievement.Ignition, AchievementType.Standard),
-			(UserAchievement.Voila, AchievementType.Standard),
-			(UserAchievement.Eyescatter, AchievementType.Standard),
-			(UserAchievement.SoEasy, AchievementType.Standard),
-			(UserAchievement.Habitant, AchievementType.Standard),
-			(UserAchievement.GreenArrow, AchievementType.Standard),
-			(UserAchievement.Complaisance, AchievementType.Standard),
-
-			//Rare
-			(UserAchievement.NowIKnow, AchievementType.Rare),
-			(UserAchievement.TakeYourTime, AchievementType.Rare),
-			(UserAchievement.ALongWay, AchievementType.Rare),
-			(UserAchievement.IveSeenThis, AchievementType.Rare),
-			(UserAchievement.TheSeeker, AchievementType.Rare),
-			(UserAchievement.BadLuck, AchievementType.Rare),
-			(UserAchievement.Unstoppable, AchievementType.Rare),
-			(UserAchievement.Paradox, AchievementType.Rare),
-			(UserAchievement.Trinity, AchievementType.Rare),
-
-			//SuperRare
-			(UserAchievement.Bullseye, AchievementType.SuperRare),
-			(UserAchievement.Insister, AchievementType.SuperRare),
-			(UserAchievement.PerfectTiming, AchievementType.SuperRare),
-			(UserAchievement.DoubleQuick, AchievementType.SuperRare),
-			(UserAchievement.RareCollector, AchievementType.SuperRare),
-			(UserAchievement.Flash, AchievementType.SuperRare),
-			(UserAchievement.TheHabitMaster, AchievementType.SuperRare),
-			(UserAchievement.Stability, AchievementType.SuperRare),
-
-			//UltraRare
-			(UserAchievement.CheckMe, AchievementType.UltraRare),
-			(UserAchievement.SuperRareCollector, AchievementType.UltraRare),
-			(UserAchievement.RoundTheWorld, AchievementType.UltraRare),
-
-			//Standard
-			(UserAchievement.UltraRareCollector, AchievementType.Unique),
-			(UserAchievement.Curious, AchievementType.Unique),
-			(UserAchievement.TaDam, AchievementType.Unique),
-			(UserAchievement.NotSoHard, AchievementType.Unique),
-			(UserAchievement.Split, AchievementType.Unique)
-		};
-
 		public static bool HasAllAchievementByType(AchievementInfo achievements, AchievementType type) =>
 			HasAchievement(achievements, achievementType => achievementType == type);
 
@@ -83,7 +38,7 @@ namespace Service.UserReward.Helpers
 		{
 			int userAchievementCount = GetAchievementCount(achievements, func);
 
-			int allAchievementCount = AchievementTypeInfo.Count(tuple => func.Invoke(tuple.type));
+			int allAchievementCount = AchievementTypeHelper.AchievementTypeInfo.Count(tuple => func.Invoke(tuple.type));
 
 			return userAchievementCount == allAchievementCount;
 		}
@@ -91,7 +46,7 @@ namespace Service.UserReward.Helpers
 		public static int GetAchievementCount(AchievementInfo achievements, Func<AchievementType, bool> func)
 		{
 			return (from achievement in achievements.Items
-				join typeInfo in AchievementTypeInfo on achievement equals typeInfo.achievement
+				join typeInfo in AchievementTypeHelper.AchievementTypeInfo on achievement equals typeInfo.achievement
 				where func.Invoke(typeInfo.type)
 				select achievement)
 				.Count();
