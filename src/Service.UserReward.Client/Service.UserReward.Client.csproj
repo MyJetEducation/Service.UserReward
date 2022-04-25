@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference PrivateAssets="All" Include="..\Service.UserReward.Domain.Models\Service.UserReward.Domain.Models.csproj" />
+    <ProjectReference Include="..\Service.UserReward.Domain\Service.UserReward.Domain.csproj" />
     <ProjectReference PrivateAssets="All" Include="..\Service.UserReward.Grpc\Service.UserReward.Grpc.csproj" />
   </ItemGroup>
 
