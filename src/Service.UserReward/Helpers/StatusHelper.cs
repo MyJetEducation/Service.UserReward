@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using Service.Core.Client.Constants;
 using Service.UserReward.Models;
 
@@ -9,22 +8,20 @@ namespace Service.UserReward.Helpers
 	{
 		public static StatusInfo SetStatus(this StatusInfo info, UserStatus status, Func<bool> predicate, int level = 1)
 		{
-			if (info.Items.Any(dto => dto.Status == status && dto.Level == level) || !predicate.Invoke())
+			if (info.Exists(status, level) || !predicate.Invoke())
 				return info;
 
-			info.Items.Add(new StatusDto(status, level));
-			info.Changed = true;
+			info.AddItem(new StatusDto(status, level));
 
 			return info;
 		}
 
 		public static StatusInfo SetStatus(this StatusInfo info, UserStatus status, int level = 1)
 		{
-			if (level == 0 || level > 5 || info.Items.Any(dto => dto.Status == status && dto.Level == level))
+			if (level == 0 || level > 5 || info.Exists(status, level))
 				return info;
 
-			info.Items.Add(new StatusDto(status, level));
-			info.Changed = true;
+			info.AddItem(new StatusDto(status, level));
 
 			return info;
 		}

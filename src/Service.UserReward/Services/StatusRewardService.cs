@@ -51,7 +51,7 @@ namespace Service.UserReward.Services
 			.SetStatus(UserStatus.Magister, () => IsTutorialLearned(educationProgress, EducationTutorial.Economics));
 
 			//за выполнение задач Test на 100% с 1 попытки
-			if (!statuses.Items.Any(dto => dto.Status == UserStatus.Expert && dto.Level == 5))
+			if (!statuses.Exists(UserStatus.Expert, 5))
 			{
 				TestTasks100PrcDto tasks100Prc = await _dtoRepository.GetTestTasks100Prc(userId);
 				if (tasks100Prc.Count == 9)
@@ -81,7 +81,7 @@ namespace Service.UserReward.Services
 		{
 			void TrySetRewarded(Func<int> defaultCountFunc, int level, AchievementType achievementType)
 			{
-				if (statuses.Items.Any(dto => dto.Status == UserStatus.Rewarded && dto.Level == level))
+				if (statuses.Exists(UserStatus.Rewarded, level))
 					return;
 
 				int defaultCount = defaultCountFunc.Invoke();

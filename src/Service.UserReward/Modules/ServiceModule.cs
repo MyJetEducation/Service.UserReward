@@ -43,6 +43,15 @@ namespace Service.UserReward.Modules
 			builder.RegisterType<UserProgressUpdatedNotificator>().AutoActivate().SingleInstance();
 			builder.RegisterType<UserTimeChangedNotificator>().AutoActivate().SingleInstance();
 			builder.RegisterType<MarketProductPurchasedNotificator>().AutoActivate().SingleInstance();
+
+			var tcpServiceBus = new MyServiceBusTcpClient(() => Program.Settings.ServiceBusWriter, "MyJetEducation Service.UserReward");
+
+			builder
+				.Register(context => new MyServiceBusPublisher<UserRewardedServiceBusModel>(tcpServiceBus, UserRewardedServiceBusModel.TopicName, false))
+				.As<IServiceBusPublisher<UserRewardedServiceBusModel>>()
+				.SingleInstance();
+
+			tcpServiceBus.Start();
 		}
 	}
 }

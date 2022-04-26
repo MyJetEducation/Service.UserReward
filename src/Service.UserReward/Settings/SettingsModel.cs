@@ -17,6 +17,9 @@ namespace Service.UserReward.Settings
 		[YamlProperty("UserReward.ServiceBusReader")]
 		public string ServiceBusReader { get; set; }
 
+		[YamlProperty("UserReward.ServiceBusWriter")]
+		public string ServiceBusWriter { get; set; }
+
 		[YamlProperty("UserReward.ServerKeyValueServiceUrl")]
 		public string ServerKeyValueServiceUrl { get; set; }
 

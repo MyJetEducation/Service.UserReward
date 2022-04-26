@@ -1,7 +1,9 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using DotNetCoreDecorators;
 using Microsoft.Extensions.Logging;
+using MyJetWallet.Sdk.ServiceBus;
 using Service.Core.Client.Constants;
 using Service.Core.Client.Extensions;
 using Service.EducationProgress.Grpc;
@@ -20,19 +22,22 @@ namespace Service.UserReward.Jobs
 		private readonly IDtoRepository _dtoRepository;
 		private readonly ITotalRewardService _totalRewardService;
 		private readonly IEducationProgressService _educationProgressService;
+		private readonly IServiceBusPublisher<UserRewardedServiceBusModel> _publisher;
 
 		public SetProgressInfoNotificator(ILogger<SetProgressInfoNotificator> logger,
 			ISubscriber<IReadOnlyList<SetProgressInfoServiceBusModel>> subscriber,
 			IStatusRewardService statusRewardService,
 			IAchievementRewardService achievementRewardService,
 			IDtoRepository dtoRepository,
-			IEducationProgressService educationProgressService)
+			IEducationProgressService educationProgressService,
+			IServiceBusPublisher<UserRewardedServiceBusModel> publisher)
 		{
 			_logger = logger;
 			_statusRewardService = statusRewardService;
 			_achievementRewardService = achievementRewardService;
 			_dtoRepository = dtoRepository;
 			_educationProgressService = educationProgressService;
+			_publisher = publisher;
 			_totalRewardService = new TotalRewardService(_statusRewardService, _achievementRewardService, _dtoRepository);
 			subscriber.Subscribe(HandleEvent);
 		}
@@ -58,6 +63,19 @@ namespace Service.UserReward.Jobs
 				_achievementRewardService.CheckByProgress(message, educationProgress, achievements);
 				await _totalRewardService.CheckTotal(userId, statuses, achievements);
 				await ProcessNewAchievements(userId, message, achievements);
+
+				//Publish new statuses and achievements for increase user tokens
+				if (statuses.Changed || achievements.Changed)
+					await _publisher.PublishAsync(new UserRewardedServiceBusModel
+					{
+						UserId = userId,
+						Achievements = achievements.NewItems.ToArray(),
+						Statuses = statuses.NewItems.Select(dto => new UserStatusGrpcModel
+						{
+							Status = dto.Status,
+							Level = dto.Level
+						}).ToArray()
+					});
 			}
 		}
 
