@@ -9,6 +9,7 @@ using Service.Core.Client.Extensions;
 using Service.EducationProgress.Grpc;
 using Service.EducationProgress.Grpc.Models;
 using Service.ServiceBus.Models;
+using Service.UserReward.Helpers;
 using Service.UserReward.Models;
 using Service.UserReward.Services;
 
@@ -63,19 +64,7 @@ namespace Service.UserReward.Jobs
 				_achievementRewardService.CheckByProgress(message, educationProgress, achievements);
 				await _totalRewardService.CheckTotal(userId, statuses, achievements);
 				await ProcessNewAchievements(userId, message, achievements);
-
-				//Publish new statuses and achievements for increase user tokens
-				if (statuses.Changed || achievements.Changed)
-					await _publisher.PublishAsync(new UserRewardedServiceBusModel
-					{
-						UserId = userId,
-						Achievements = achievements.NewItems.ToArray(),
-						Statuses = statuses.NewItems.Select(dto => new UserStatusGrpcModel
-						{
-							Status = dto.Status,
-							Level = dto.Level
-						}).ToArray()
-					});
+				await PublishHelper.TryPublishUserRewarded(_publisher, userId, statuses, achievements);
 			}
 		}
 

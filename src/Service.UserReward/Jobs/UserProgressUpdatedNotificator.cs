@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using DotNetCoreDecorators;
 using Microsoft.Extensions.Logging;
+using MyJetWallet.Sdk.ServiceBus;
 using Service.Core.Client.Constants;
 using Service.ServiceBus.Models;
 using Service.UserReward.Helpers;
@@ -15,7 +16,8 @@ namespace Service.UserReward.Jobs
 		public UserProgressUpdatedNotificator(ILogger<UserProgressUpdatedNotificator> logger,
 			ISubscriber<IReadOnlyList<UserProgressUpdatedServiceBusModel>> subscriber,
 			IDtoRepository dtoRepository,
-			ITotalRewardService totalRewardService) : base(dtoRepository, totalRewardService, logger) =>
+			ITotalRewardService totalRewardService, IServiceBusPublisher<UserRewardedServiceBusModel> publisher) 
+			: base(dtoRepository, totalRewardService, logger, publisher) =>
 				subscriber.Subscribe(HandleEvent);
 
 		private async ValueTask HandleEvent(IReadOnlyList<UserProgressUpdatedServiceBusModel> events)

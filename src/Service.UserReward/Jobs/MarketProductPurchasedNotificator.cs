@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using DotNetCoreDecorators;
 using Microsoft.Extensions.Logging;
+using MyJetWallet.Sdk.ServiceBus;
 using Service.Core.Client.Constants;
 using Service.Core.Client.Services;
 using Service.ServiceBus.Models;
@@ -21,7 +22,8 @@ namespace Service.UserReward.Jobs
 		public MarketProductPurchasedNotificator(ILogger<MarketProductPurchasedNotificator> logger,
 			ISubscriber<IReadOnlyList<MarketProductPurchasedServiceBusModel>> subscriber,
 			IDtoRepository dtoRepository,
-			ITotalRewardService totalRewardService, ISystemClock systemClock) : base(dtoRepository, totalRewardService, logger)
+			ITotalRewardService totalRewardService, ISystemClock systemClock, IServiceBusPublisher<UserRewardedServiceBusModel> publisher) 
+			: base(dtoRepository, totalRewardService, logger, publisher)
 		{
 			_systemClock = systemClock;
 			subscriber.Subscribe(HandleEvent);

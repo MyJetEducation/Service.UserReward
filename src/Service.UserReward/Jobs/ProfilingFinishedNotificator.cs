@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using DotNetCoreDecorators;
 using Microsoft.Extensions.Logging;
+using MyJetWallet.Sdk.ServiceBus;
 using Service.Core.Client.Constants;
 using Service.ServiceBus.Models;
 using Service.UserReward.Helpers;
@@ -14,7 +15,8 @@ namespace Service.UserReward.Jobs
 		public ProfilingFinishedNotificator(ILogger<ProfilingFinishedNotificator> logger,
 			ISubscriber<IReadOnlyList<ProfilingFinishedServiceBusModel>> subscriber,
 			IDtoRepository dtoRepository,
-			ITotalRewardService totalRewardService) : base(dtoRepository, totalRewardService, logger) =>
+			ITotalRewardService totalRewardService, IServiceBusPublisher<UserRewardedServiceBusModel> publisher) 
+			: base(dtoRepository, totalRewardService, logger, publisher) =>
 				subscriber.Subscribe(HandleEvent);
 
 		private async ValueTask HandleEvent(IReadOnlyList<ProfilingFinishedServiceBusModel> events)
