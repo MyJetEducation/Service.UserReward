@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MyJetWallet.Sdk.ServiceBus;
 using Service.Core.Client.Constants;
 using Service.Core.Client.Models;
 using Service.Education.Structure;
+using Service.ServiceBus.Models;
 using Service.UserReward.Grpc;
 using Service.UserReward.Grpc.Models;
 using Service.UserReward.Helpers;
@@ -17,11 +19,13 @@ namespace Service.UserReward.Services
 	{
 		private readonly IDtoRepository _dtoRepository;
 		private readonly ITotalRewardService _totalRewardService;
+		private readonly IServiceBusPublisher<UserRewardedServiceBusModel> _publisher;
 
-		public UserRewardService(IDtoRepository dtoRepository, ITotalRewardService totalRewardService)
+		public UserRewardService(IDtoRepository dtoRepository, ITotalRewardService totalRewardService, IServiceBusPublisher<UserRewardedServiceBusModel> publisher)
 		{
 			_dtoRepository = dtoRepository;
 			_totalRewardService = totalRewardService;
+			_publisher = publisher;
 		}
 
 		public async ValueTask<UserStatusesGrpcResponse> GetUserStatusesAsync(GetUserStatusesGrpcRequest request) =>
@@ -71,7 +75,11 @@ namespace Service.UserReward.Services
 
 			action.Invoke(statuses, achievements);
 
-			return await _totalRewardService.CheckTotal(userId, statuses, achievements);
+			CommonGrpcResponse commonGrpcResponse = await _totalRewardService.CheckTotal(userId, statuses, achievements);
+
+			await PublishHelper.TryPublishUserRewarded(_publisher, userId, statuses, achievements);
+
+			return commonGrpcResponse;
 		}
 	}
 }
